@@ -1,0 +1,17 @@
+{
+  "cors": [
+    {
+      "origin": ["*"],
+      "method": ["GET", "HEAD", "PUT", "POST", "DELETE", "OPTIONS"],
+      "maxAgeSeconds": 3600,
+      "responseHeader": [
+        "Content-Type",
+        "Content-Length",
+        "Content-Encoding",
+        "Content-Disposition",
+        "Cache-Control",
+        "Cross-Origin-Resource-Policy"
+      ]
+    }
+  ]
+}
