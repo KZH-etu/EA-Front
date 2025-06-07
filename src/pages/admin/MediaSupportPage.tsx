@@ -78,8 +78,10 @@ const MediaSupportPage = () => {
   };
 
   // Récupère les MediaVersions pour une entité
-  const getVersionsForEntity = (entityId: string) =>
+  const getVersionsForEntity = (entityId: string) => {
+    console.log(entityId, mediaVersions);
     mediaVersions.filter(v => v.documentId === entityId);
+  }
 
   // Récupère les MediaSupports pour une version
   const getSupportsForVersion = (versionId: string) =>
