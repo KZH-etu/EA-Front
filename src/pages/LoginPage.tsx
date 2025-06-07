@@ -55,7 +55,7 @@ const LoginPage = () => {
         {/* Header */}
         <div className="p-6 bg-primary-500 text-white text-center">
           <Link to="/" className="inline-block">
-            <Logo className="h-12 mx-auto" />
+            <Logo className="h-12 mx-auto" admin={true}/>
           </Link>
           <h1 className="text-2xl font-bold mt-4 text-white">Espace Administrateur</h1>
           <p className="mt-2 text-primary-100">Connectez-vous pour gérer le contenu du site</p>

@@ -42,7 +42,7 @@ const BranhamPage = () => {
       <PageHeader 
         title="William Marrion Branham" 
         subtitle="Découvrez le ministère de William Marrion Branham"
-        backgroundImage="https://images.pexels.com/photos/2425232/pexels-photo-2425232.jpeg"
+        backgroundImage="https://images.pexels.com/photos/2635393/pexels-photo-2635393.jpeg"
       />
       
       <div className="container mx-auto px-4 py-12">

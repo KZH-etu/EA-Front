@@ -15,11 +15,7 @@ import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
 const DashboardPage = () => {
-  const { stats, sermons, events, loading, error, fetchData } = useAdminStore();
-
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const { entities, stats, sermons, events, loading, error} = useAdminStore();
 
   if (loading) {
     return (
@@ -130,7 +126,6 @@ const DashboardPage = () => {
                     <td className="py-4 text-neutral-600">
                       {format(new Date(sermon.date), 'dd MMM', { locale: fr })}
                     </td>
-                    <td className="py-4 text-right text-neutral-600">{sermon.views}</td>
                   </tr>
                 ))}
               </tbody>

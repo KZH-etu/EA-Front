@@ -20,7 +20,7 @@ const EventsPage = () => {
       <PageHeader 
         title={t('nav.events')}
         subtitle={t('events.subtitle')}
-        backgroundImage="https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg"
+        backgroundImage="https://images.pexels.com/photos/533982/pexels-photo-533982.jpeg"
       />
       
       <section className="py-16">

@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
-import { MediaVersion } from '../../stores/useMediaVersionStrore';
+import { MediaVersion } from '../../stores/useMediaVersionStore';
 import { Language } from '../../stores/useLanguagesStore';
 
 interface Entity {
@@ -37,7 +37,7 @@ export function DocumentVersionForm({
     defaultValues: initialData || {
       id: '',
       documentId: '',
-      language: '',
+      languageId: '',
       title: '',
       description: '',
     },
@@ -55,7 +55,7 @@ export function DocumentVersionForm({
   }, [entitySearch, entities]);
 
   const selectedEntityId = watch('documentId');
-  const selectedLanguage = watch('language');
+  const selectedLanguage = watch('languageId');
 
   // Empêcher la duplication
   const isDuplicate =
@@ -64,7 +64,7 @@ export function DocumentVersionForm({
     existingVersions.some(
       (v) =>
         v.documentId === selectedEntityId &&
-        v.language === selectedLanguage &&
+        v.languageId === selectedLanguage &&
         (!initialData || v.id !== initialData.id)
     );
 
@@ -141,8 +141,8 @@ export function DocumentVersionForm({
         <label className="block font-medium mb-1">Langue *</label>
         <select
           className="form-input w-full"
-          {...register('language', { required: 'Langue requise' })}
-          defaultValue={initialData?.language || ''}
+          {...register('languageId', { required: 'Langue requise' })}
+          defaultValue={initialData?.languageId || ''}
         >
           <option value="">Sélectionner une langue</option>
           {languages.map((lang) => (
@@ -151,8 +151,8 @@ export function DocumentVersionForm({
             </option>
           ))}
         </select>
-        {errors.language && (
-          <p className="text-error text-sm">{errors.language.message}</p>
+        {errors.languageId && (
+          <p className="text-error text-sm">{errors.languageId.message}</p>
         )}
       </div>
 

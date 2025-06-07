@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAdminStore } from '../../stores/useAdminStore';
 import { 
   Plus, 
@@ -11,29 +11,28 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { EntityForm } from '../../components/admin/EntityForm';
-import { Entity } from '../../stores/useEntitiesStore';
-
-const LANGUAGES = [
-  { code: 'fr', name: 'Français' },
-  { code: 'en', name: 'English' },
-  { code: 'es', name: 'Español' }
-];
-
-const LOCATIONS = [
-  'Assemblée d\'Abidjan',
-  'Salle de Conférence',
-  'Centre Biblique',
-  'Autre'
-];
+import { Entity, useEntitiesStore } from '../../stores/useEntitiesStore';
+import { useTagsStore } from '../../stores/useTagsStore';
 
 const EntitiesPage = () => {
-  const { entities, tags, loading, error, addItem, updateItem, deleteItem } = useAdminStore();
+  const { entities, loading, error, fetchEntities, addEntity, updateEntity, deleteEntity } = useEntitiesStore();
+  const { tags, fetchTags } = useTagsStore();
+
+  useEffect(() => {
+      if (!loading && entities.length === 0) {
+        fetchEntities();
+        fetchTags();
+      }
+    }, [fetchEntities, loading, entities.length]);
+
   const [showForm, setShowForm] = useState(false);
   const [editingEntity, setEditingEntity] = useState<Entity | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [sortField, setSortField] = useState('globalTitle');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+
+  console.log('Entities:', entities);
 
 
   const handleSort = (field : string) => {
@@ -47,7 +46,7 @@ const EntitiesPage = () => {
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Voulez-vous vraiment supprimer cette entité ?')) {
-      await deleteItem('entities', id);
+      await deleteEntity(id);
     }
   };
 
@@ -201,9 +200,9 @@ const EntitiesPage = () => {
                 setSubmitting(true);
                 try {
                   if (editingEntity) {
-                    await updateItem('entities', entity.id, entity);
+                    await updateEntity(entity.id, entity);
                   } else {
-                    await addItem('entities', entity);
+                    await addEntity(entity);
                   }
                   setShowForm(false);
                   setEditingEntity(null);

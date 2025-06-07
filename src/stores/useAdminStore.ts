@@ -1,11 +1,10 @@
-import { useState, useCallback } from 'react';
 import { useDataStore } from '../services/dataService';
 import { Sermon } from './useSermonsStore';
 import { Books } from './useBooksStore';
 import { Event } from './useEventsStore';
 import { Tags } from './useTagsStore';
 import { Entity } from './useEntitiesStore';
-import { MediaVersion } from './useMediaVersionStrore';
+import { MediaVersion } from './useMediaVersionStore';
 import { MediaSupport } from './useMediaSupportStore';
 import { Language } from './useLanguagesStore';
 
@@ -23,6 +22,7 @@ interface AdminStore {
   aboutSections: any[];
   aboutDetails: any[];
   loading: boolean;
+  hasFetched: boolean;
   error: string | null;
   fetchData: () => Promise<void>;
   addItem: (type: "languages" | "mediaSupports" | "mediaVersions" | "entities" | "sermons" | "books" | "events" | "tags" | "subscribers" | "stats" | "aboutSections" | "aboutDetails", item: any) => Promise<void>;

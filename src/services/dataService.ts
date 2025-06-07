@@ -1,21 +1,34 @@
 import { create } from 'zustand';
-import { mockAdminSermons, mockAdminBooks, mockAdminEvents, mockAdminTags, mockAdminSubscribers, mockAdminStats, mockAdminAboutSections, mockAdminAboutDetails, mockAdminEntities, mockAdminMediaVersions, mockAdminMediaSupport, mockAdminLanguages } from '../lib/mockAdminData';
+import {  mockAdminEvents, mockAdminTags, mockAdminSubscribers, mockAdminStats, mockAdminAboutSections, mockAdminAboutDetails, mockAdminLanguages } from '../lib/mockAdminData';
+import { MediaSupport } from '../stores/useMediaSupportStore';
+import { MediaVersion } from '../stores/useMediaVersionStore';
+import { Entity } from '../stores/useEntitiesStore';
+import { Sermon } from '../stores/useSermonsStore';
+import { Books } from '../stores/useBooksStore';
+import { Tags } from '../stores/useTagsStore';
+import { Event } from '../stores/useEventsStore';
+import { createDocument, deleteDocument, fetchDocuments, updateDocument } from './documentService';
+import { createDocumentVersion, deleteDocumentVersion, fetchDocumentVersions, updateDocumentVersion } from './documentVersionService';
+import { createDocumentMedia, deleteDocumentMedia, fetchDocumentMedias, updateDocumentMedia } from './documentMediaService';
+import { mapBooks, mapSermons } from '../components/utils/formatters';
+import { createTag, deleteTag, updateTag } from './tagService';
 
 // Central store for all data
 interface DataState {
-  mediaSupports: typeof mockAdminMediaSupport;
-  mediaVersions: typeof mockAdminMediaVersions;
-  entities: typeof mockAdminEntities;
-  sermons: typeof mockAdminSermons;
-  books: typeof mockAdminBooks;
-  events: typeof mockAdminEvents;
-  tags: typeof mockAdminTags;
-  languages: typeof mockAdminLanguages
+  mediaSupports: MediaSupport[];
+  mediaVersions: MediaVersion[];
+  entities: Entity[];
+  sermons: Sermon[];
+  books: Books[];
+  events: Event[];
+  tags: Tags[];
+  languages: typeof mockAdminLanguages;
   subscribers: typeof mockAdminSubscribers;
-  stats: typeof mockAdminStats;
+  stats: any;
   aboutSections: typeof mockAdminAboutSections;
   aboutDetails: typeof mockAdminAboutDetails;
   loading: boolean;
+  hasFetched: boolean;
   error: string | null;
 }
 
@@ -46,43 +59,52 @@ interface DataStore extends DataState {
 // Simulate API delay
 const simulateDelay = () => new Promise(resolve => setTimeout(resolve, 500));
 
+const initialState: DataState = {
+  mediaSupports: [],
+  mediaVersions: [],
+  entities: [],
+  sermons: [],
+  books: [],
+  events: [],
+  tags: [],
+  languages: [],
+  subscribers: [],
+  stats: mockAdminStats,
+  aboutSections: [],
+  aboutDetails: [],
+  loading: false,
+  hasFetched: false,
+  error: null,
+};
+
 // Create the central data store
 export const useDataStore = create<DataStore>((set, get) => ({
   // Initial state
-  mediaSupports: mockAdminMediaSupport,
-  mediaVersions: mockAdminMediaVersions,
-  entities: mockAdminEntities,
-  sermons: mockAdminSermons,
-  books: mockAdminBooks,
-  events: mockAdminEvents,
-  tags: mockAdminTags,
-  languages: mockAdminLanguages,
-  subscribers: mockAdminSubscribers,
-  stats: mockAdminStats,
-  aboutSections: mockAdminAboutSections,
-  aboutDetails: mockAdminAboutDetails,
-  loading: false,
-  error: null,
-
+  ...initialState,
+  
   // Actions
   fetchData: async () => {
     set({ loading: true, error: null });
     try {
-      await simulateDelay();
+      console.log('Fetching data...');
+      const [entities , mediaVersions, mediaSupports] = await Promise.all([
+        fetchDocuments(),
+        fetchDocumentVersions(),
+        fetchDocumentMedias()
+      ]);
       set({
-        mediaSupports: mockAdminMediaSupport,
-        mediaVersions: mockAdminMediaVersions,
-        entities: mockAdminEntities,
-        sermons: mockAdminSermons,
-        books: mockAdminBooks,
+        entities,
+        mediaVersions,
+        mediaSupports,
         events: mockAdminEvents,
         tags: mockAdminTags,
         languages: mockAdminLanguages,
         subscribers: mockAdminSubscribers,
         stats: mockAdminStats,
-        aboutSections: mockAdminAboutSections,
-        aboutDetails: mockAdminAboutDetails,
-        loading: false
+        books: mapBooks({entities, versions: mediaVersions, medias: mediaSupports}),
+        sermons: mapSermons({entities, versions: mediaVersions, medias: mediaSupports}),
+        loading: false,
+        hasFetched: true,
       });
     } catch (error) {
       set({ error: 'Failed to fetch data', loading: false });
@@ -90,19 +112,23 @@ export const useDataStore = create<DataStore>((set, get) => ({
   },
 
   addItem: async (type, item) => {
-    let newItem = {};
     set({ loading: true, error: null });
     try {
-      await simulateDelay();
-      if(type !== 'languages'){
-        newItem = { ...item, id: Math.random().toString(36).substr(2, 9) } as any;
-      }else{
-        newItem = { ...item}
+      switch (type) {
+        case 'mediaSupports':
+          await createDocumentMedia(item as MediaSupport);
+          break;
+        case 'mediaVersions':
+          await createDocumentVersion(item as MediaVersion);
+          break;
+        case 'entities':
+          await createDocument(item as Entity);
+          break;
+        case 'tags':
+          await createTag(item as Tags);
+          break;
       }
-      console.log(`Adding new item to ${type}:`, newItem);
-      const currentItems = get()[type] as any[];
-      const items = [...currentItems, newItem];
-      set({ [type]: items, loading: false });
+      await get().fetchData();
     } catch (error) {
       set({ error: `Failed to add ${type}`, loading: false });
     }
@@ -111,10 +137,22 @@ export const useDataStore = create<DataStore>((set, get) => ({
   updateItem: async (type, id, item) => {
     set({ loading: true, error: null });
     try {
-      await simulateDelay();
-      const currentItems = get()[type] as any[];
-      const items = currentItems.map((i: any) => i.id === id ? { ...i, ...item } : i);
-      set({ [type]: items, loading: false });
+      switch (type) {
+        case 'mediaSupports':
+          await updateDocumentMedia(id, item as Partial<MediaSupport>);
+          break;
+        case 'mediaVersions':
+          await updateDocumentVersion(id, item as Partial<MediaVersion>);
+          break;
+        case 'tags':
+          await updateTag(id, item as Partial<Tags>);
+          break;
+          case 'entities':
+          await updateDocument(id, item as Partial<Entity>);
+          break;
+      }
+      // Ajoute ici les autres types si besoin
+      await get().fetchData();
     } catch (error) {
       set({ error: `Failed to update ${type}`, loading: false });
     }
@@ -123,10 +161,22 @@ export const useDataStore = create<DataStore>((set, get) => ({
   deleteItem: async (type, id) => {
     set({ loading: true, error: null });
     try {
-      await simulateDelay();
-      const currentItems = get()[type] as any[];
-      const items = currentItems.filter((i: any) => i.id !== id);
-      set({ [type]: items, loading: false });
+      switch (type) {
+        case 'mediaSupports':
+          await deleteDocumentMedia(id);
+          break;
+        case 'mediaVersions':
+          await deleteDocumentVersion(id);
+          break;
+        case 'tags':
+          await deleteTag(id);
+          break;
+          case 'entities':
+          await deleteDocument(id);
+          break;
+      }
+      // Ajoute ici les autres types si besoin
+      await get().fetchData();
     } catch (error) {
       set({ error: `Failed to delete ${type}`, loading: false });
     }

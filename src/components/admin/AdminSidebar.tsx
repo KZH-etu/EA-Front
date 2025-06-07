@@ -35,7 +35,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar }: AdminSidebarProps) => {
       {/* Sidebar Header */}
       <div className="p-5 border-b border-primary-700">
         <div className="flex items-center justify-center">
-          <Logo className="h-10" />
+          <Logo className="h-10" admin={true} />
         </div>
       </div>
       

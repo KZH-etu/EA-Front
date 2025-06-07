@@ -2,12 +2,21 @@ import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import AdminSidebar from '../components/admin/AdminSidebar';
 import AdminHeader from '../components/admin/AdminHeader';
+import { useAdminStore } from '../stores/useAdminStore';
 
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const location = useLocation();
   const isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true';
+
+  const { fetchData, hasFetched } = useAdminStore();
+
+  useEffect(() => {
+    if (!hasFetched) {
+      fetchData();
+    }
+  }, [fetchData, hasFetched]);
 
   // Handle sidebar toggle
   const toggleSidebar = () => {

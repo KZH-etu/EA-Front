@@ -42,7 +42,7 @@ const FrankPage = () => {
       <PageHeader 
         title="Ewald Frank" 
         subtitle="Découvrez le ministère d'Ewald Frank"
-        backgroundImage="https://images.pexels.com/photos/2425232/pexels-photo-2425232.jpeg"
+        backgroundImage="https://images.pexels.com/photos/9940114/pexels-photo-9940114.jpeg"
       />
       
       <div className="container mx-auto px-4 py-12">

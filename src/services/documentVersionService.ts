@@ -1,4 +1,4 @@
-import { MediaVersion } from '../stores/useMediaVersionStrore';
+import { MediaVersion } from '../stores/useMediaVersionStore';
 import api from './apiService';
 
 export async function fetchDocumentVersions() {
@@ -6,17 +6,17 @@ export async function fetchDocumentVersions() {
   return res.data;
 }
 
-export async function createDocumentVersions(document: MediaVersion) {
+export async function createDocumentVersion(document: MediaVersion) {
   const res = await api.post('/document-versions', document);
   return res.data;
 }
 
-export async function updateDocumentVersions(id: string, updates: Partial<MediaVersion>) {
+export async function updateDocumentVersion(id: string, updates: Partial<MediaVersion>) {
   const res = await api.patch(`/document-versions/${id}`, updates);
   return res.data;
 }
 
-export async function deleteDocumentVersions(id: string) {
+export async function deleteDocumentVersion(id: string) {
   const res = await api.delete(`/document-versions/${id}`);
   return res.data;
 }

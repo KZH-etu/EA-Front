@@ -136,7 +136,7 @@ const VideoSermonsPage = () => {
       <PageHeader 
         title={t('nav.videoSermons')}
         subtitle={t('sermons.video.subtitle')}
-        backgroundImage="https://images.pexels.com/photos/2774556/pexels-photo-2774556.jpeg"
+        backgroundImage="https://images.pexels.com/photos/6879095/pexels-photo-6879095.jpeg"
       />
 
       <div className="container-custom py-8">

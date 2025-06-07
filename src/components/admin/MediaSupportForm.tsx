@@ -10,7 +10,7 @@ interface Entity {
 interface MediaVersion {
   id: string;
   documentId: string;
-  language: string;
+  languageId: string;
   title: string;
 }
 
@@ -208,7 +208,7 @@ export function MediaSupportForm({ entities, initialData, mediaVersions, onSubmi
             <option value="">Sélectionner une version</option>
             {filteredVersions.map(v => (
               <option key={v.id} value={v.id}>
-                {v.title} ({LANGUAGES.find(l => l.code === v.language)?.label || v.language})
+                {v.title} ({LANGUAGES.find(l => l.code === v.languageId)?.label || v.languageId})
               </option>
             ))}
           </select>

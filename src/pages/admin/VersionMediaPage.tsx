@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAdminStore } from '../../stores/useAdminStore';
-import { MediaVersion, useEntitiesStore as useMediaVersionStore } from '../../stores/useMediaVersionStrore';
+import { MediaVersion, useMediaVersionsStore, } from '../../stores/useMediaVersionStore';
 import {
   Plus,
   Search,
@@ -12,9 +12,13 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { DocumentVersionForm } from '../../components/admin/MediaVersionForm';
+import { useEntitiesStore } from '../../stores/useEntitiesStore';
+import { useLanguagesStore } from '../../stores/useLanguagesStore';
 
 const VersionMediaPage = () => {
-  const { entities, languages, loading: entitiesLoading, error: entitiesError } = useAdminStore();
+  const { entities, loading: entitiesLoading, error: entitiesError, fetchEntities } = useEntitiesStore();
+  const { languages, fetchLanguages } = useLanguagesStore();
+
   // MediaVersions = versions traduites
   const {
     mediaVersions,
@@ -23,7 +27,7 @@ const VersionMediaPage = () => {
     addMediaVersion,
     updateMediaVersion,
     deleteMediaVersion
-  } = useMediaVersionStore();
+  } = useMediaVersionsStore();
 
   const [showForm, setShowForm] = useState(false);
   const [editingVersion, setEditingVersion] = useState<MediaVersion | null>(null);
@@ -35,7 +39,7 @@ const VersionMediaPage = () => {
     return (
       (entity?.globalTitle?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
       (version.title?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
-      (languages.find(l => l.id === version.language)?.title.toLowerCase().includes(searchTerm.toLowerCase()) ?? false)
+      (languages.find(l => l.id === version.languageId)?.title.toLowerCase().includes(searchTerm.toLowerCase()) ?? false)
     );
   });
 
@@ -123,13 +127,12 @@ const VersionMediaPage = () => {
           <tbody>
             {filteredVersions.map((version) => {
               const entity = entities.find(e => e.id === version.documentId);
-              console.log('language:', languages.find(l => l.id === version.language));
               return (
                 <tr key={version.id} className="border-b border-neutral-200 hover:bg-neutral-50">
                   <td className="px-6 py-4">{entity?.globalTitle || <span className="text-neutral-400">Inconnu</span>}</td>
                   <td className="px-6 py-4 flex items-center gap-2">
                     <Globe size={16} className="text-neutral-400" />
-                    {languages.find(l => l.id === version.language)?.title || version.language}
+                    {languages.find(l => l.id === version.languageId)?.title}
                   </td>
                   <td className="px-6 py-4">{version.title}</td>
                   <td className="px-6 py-4 flex items-center gap-2">

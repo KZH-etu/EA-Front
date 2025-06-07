@@ -63,7 +63,7 @@ const AboutPage = () => {
       <PageHeader 
         title={t('nav.about')}
         subtitle={t('about.subtitle')}
-        backgroundImage="https://images.pexels.com/photos/2425232/pexels-photo-2425232.jpeg"
+        backgroundImage="https://images.pexels.com/photos/372326/pexels-photo-372326.jpeg"
       />
 
       {/* L'Assemblée d'Abidjan Section */}

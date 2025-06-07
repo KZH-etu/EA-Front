@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useAdminStore } from '../../stores/useAdminStore';
-import { useEntitiesStore as useMediaVersionStore } from '../../stores/useMediaVersionStrore';
-import { useEntitiesStore as useMediaSupportStore, MediaType, MediaSupport } from '../../stores/useMediaSupportStore';
+import {MediaType, MediaSupport, useMediaSupportsStore } from '../../stores/useMediaSupportStore';
 import {
   Plus,
   ChevronDown,
@@ -13,6 +12,7 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { MediaSupportForm } from '../../components/admin/MediaSupportForm';
+import { useMediaVersionsStore } from '../../stores/useMediaVersionStore';
 
 const LANGUAGES = [
   { code: 'fr', name: 'Français' },
@@ -34,7 +34,7 @@ const MediaSupportPage = () => {
     mediaVersions,
     loading: versionsLoading,
     error: versionsError,
-  } = useMediaVersionStore();
+  } = useMediaVersionsStore();
 
   const {
     mediaSupports,
@@ -43,7 +43,7 @@ const MediaSupportPage = () => {
     addMediaSupport,
     updateMediaSupport,
     deleteMediaSupport
-  } = useMediaSupportStore();
+  } = useMediaSupportsStore();
 
   const [showForm, setShowForm] = useState(false);
   const [editingSupport, setEditingSupport] = useState<MediaSupport | null>(null);
@@ -59,7 +59,7 @@ const MediaSupportPage = () => {
   // Récupère les langues disponibles pour une entité
   const getLanguagesForEntity = (entityId: string) => {
     const versions = mediaVersions.filter(v => v.documentId === entityId);
-    const langs = Array.from(new Set(versions.map(v => v.language)));
+    const langs = Array.from(new Set(versions.map(v => v.languageId)));
     return langs;
   };
 
@@ -221,12 +221,14 @@ const MediaSupportPage = () => {
                               </tr>
                             </thead>
                             <tbody>
-                              {getVersionsForEntity(entity.id).map(version =>
-                                getSupportsForVersion(version.id).map(support => (
+                              {getVersionsForEntity(entity.id).map(version => 
+                                getSupportsForVersion(version.id).map(support => 
+                                  {
+                                  return(
                                   <tr key={support.id}>
                                     <td className="px-4 py-2">{version.title}</td>
                                     <td className="px-4 py-2">
-                                      {LANGUAGES.find(l => l.code === version.language)?.name || version.language}
+                                      {LANGUAGES.find(l => l.code === version.languageId)?.name || version.languageId}
                                     </td>
                                     <td className="px-4 py-2">{MEDIA_TYPE_LABELS[support.mediaType]}</td>
                                     <td className="px-4 py-2">{support.title || <span className="text-neutral-400">-</span>}</td>
@@ -254,7 +256,7 @@ const MediaSupportPage = () => {
                                       </button>
                                     </td>
                                   </tr>
-                                ))
+                                )})
                               )}
                             </tbody>
                           </table>

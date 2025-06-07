@@ -53,14 +53,14 @@ const translations : TranslationInterface = {
     },
     home: {
       hero: {
-        title: 'Le Seigneur revient bientôt,',
-        subtitle: 'Es-tu prêt pour le recevoir?',
+        title: "Celles qui étaient prêtes entrèrent avec Lui dans la salle des noces",
+        subtitle: 'Et la porte fut fermée.',
         discoverSermons: 'Découvrir Nos Sermons'
       },
       mission: {
         title: 'Notre Mission',
-        description1: 'L\'Assemblée d\'Abidjan est dédiée à la proclamation fidèle de la Parole de Dieu. Notre mission est d\'édifier les croyants dans la foi, de partager le message du salut et d\'être une lumière dans notre communauté.',
-        description2: 'Nous croyons en l\'enseignement authentique des Écritures et nous nous efforçons de vivre selon les principes bibliques de foi, d\'amour et de service.',
+        description1: 'L\'Assemblée d\'Abidjan est dédiée à la proclamation fidèle de la Parole de Dieu. Notre mission est d\'édifier les croyants dans la foi, de partager le message du salut et d\'être une lumière dans ce monde en perdition.',
+        description2: 'Nous croyons en l\'enseignement authentique des Écritures et nous nous efforçons de vivre selon les principes bibliques de foi, d\'amour, en attendant patiemment le retour du Seigneur Jésus-Christ.',
         discoverHistory: 'Découvrir Notre Histoire',
         imageAlt: 'Assemblée d\'Abidjan',
         quote: '"La foi vient de ce qu\'on entend, et ce qu\'on entend vient de la parole de Dieu."',
@@ -259,8 +259,8 @@ const translations : TranslationInterface = {
     },
     home: {
       hero: {
-        title: 'The Lord is coming soon,',
-        subtitle: 'Are you ready to receive Him?',
+        title: 'The virgins who were ready went in with him to the wedding banquet.',
+        subtitle: 'and the door was shut.',
         discoverSermons: 'Discover Our Sermons'
       },
       mission: {
@@ -460,8 +460,8 @@ const translations : TranslationInterface = {
     },
     home: {
       hero: {
-        title: 'El Señor viene pronto,',
-        subtitle: '¿Estás listo para recibirlo?',
+        title: 'Y las que estaban preparadas entraron con él a las bodas,',
+        subtitle: 'Y se cerró la puerta.',
         discoverSermons: 'Descubre Nuestros Sermones'
       },
       mission: {

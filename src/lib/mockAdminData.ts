@@ -1,21 +1,21 @@
 import { subDays } from 'date-fns';
 import { de, tr } from 'date-fns/locale';
 import { Entity } from '../stores/useEntitiesStore';
-import { MediaVersion } from '../stores/useMediaVersionStrore';
+import { MediaVersion } from '../stores/useMediaVersionStore';
 import { MediaSupport, MediaType } from '../stores/useMediaSupportStore';
 import { Language, LanguageType } from '../stores/useLanguagesStore';
+import { Sermon } from '../stores/useSermonsStore';
 
 export const DEFAULT_PREACHERS = [
   'William Marrion Branham',
   'Ewald Frank'
 ];
 
-export const mockAdminSermons = [
+export const mockAdminSermons : Sermon[] = [
   {
     id: '1',
     preacher: 'Ewald Frank',
     date: subDays(new Date(), 2).toISOString(),
-    views: 156,
     type: 'audio',
     duration: '45:30',
     tags: ['1', '5'],
@@ -27,25 +27,19 @@ export const mockAdminSermons = [
         lang: 'fr',
         title: 'La Foi Vivante',
         description: 'Un message puissant sur la foi qui transforme les vies...',
-        audioUrl: 'https://example.com/sermons/fr/la-foi-vivante.mp3',
-        downloadUrl: 'https://example.com/downloads/fr/la-foi-vivante.pdf',
-        is_auto_translated: false
+        url: 'https://example.com/sermons/fr/la-foi-vivante.mp3',
       },
       {
         lang: 'en',
         title: 'Living Faith',
         description: 'A powerful message about faith that transforms lives...',
-        audioUrl: 'https://example.com/sermons/en/living-faith.mp3',
-        downloadUrl: 'https://example.com/downloads/en/living-faith.pdf',
-        is_auto_translated: false
+        url: 'https://example.com/sermons/en/living-faith.mp3',
       },
       {
         lang: 'es',
         title: 'Fe Viva',
         description: 'Un mensaje poderoso sobre la fe que transforma vidas...',
-        audioUrl: 'https://example.com/sermons/es/fe-viva.mp3',
-        downloadUrl: 'https://example.com/downloads/es/fe-viva.pdf',
-        is_auto_translated: false
+        url: 'https://example.com/sermons/es/fe-viva.mp3',
       }
     ]
   },
@@ -53,7 +47,6 @@ export const mockAdminSermons = [
   id: '2',
   preacher: 'Ewald Frank',
   date: subDays(new Date(), 5).toISOString(),
-  views: 243,
   type: 'audio',
   duration: '38:15',
   tags: ['2', '4'],
@@ -65,17 +58,13 @@ export const mockAdminSermons = [
       lang: 'fr',
       title: 'La Puissance de la Prière',
       description: 'Découvrez comment la prière peut transformer votre vie spirituelle...',
-      audioUrl: 'https://example.com/sermons/fr/puissance-priere.mp3',
-      downloadUrl: 'https://example.com/downloads/fr/puissance-priere.pdf',
-      is_auto_translated: false
+      url: 'https://example.com/sermons/fr/puissance-priere.mp3',
     },
     {
       lang: 'en',
       title: 'The Power of Prayer',
       description: 'Discover how prayer can transform your spiritual life...',
-      audioUrl: 'https://example.com/sermons/en/power-prayer.mp3',
-      downloadUrl: 'https://example.com/downloads/en/power-prayer.pdf',
-      is_auto_translated: false
+      url: 'https://example.com/sermons/en/power-prayer.mp3',
     }
   ]
 }
@@ -288,7 +277,7 @@ export const mockAdminAboutSections = [
       {
         lang: 'fr',
         title: 'Qui sommes-nous ?',
-        description: [`Nous ne sommes ni une dénomination, ni une organisation.`,`Nous sommes un peuple appelé par Dieu, issu de divers horizons. Nous sommes reconnaissants à Dieu de ce que nous pouvons voir l\'histoire du salut s\'accomplir devant nos yeux. Bien que nous regardons à la fois en arrière pour voir ce que Dieu a fait du temps des apôtres et des prophètes de la Bible, mais aussi en avant pour connaitre ce que Dieu va faire dans les temps à venir, mais, en tant que vrais croyants vivant constamment dans la présence de Dieu, nous reconnaissons dans l\'époque dans laquelle nous vivons, la partie de l\'histoire du salut qui s\'accomplit selon les promesses données dans Sa Parole. Et non seulement, nous la reconnaissonn mais aussi, nous y prenons part...`,`Nous avons entendu l'appel à sortir, nous sommes effectivement sortis et nous attendons le retour de notre Maitre et Seigneur Jésus-Christ en prenant notre préparation avec le plus grand sérieux. Aussi, annonçons nous cette bonne nouvelle aux autres en ces termes : « l'Epoux vient, sortez à Sa rencontre ». `]
+        description: [`Nous ne sommes ni une dénomination, ni une organisation.`,`Nous sommes un peuple appelé par Dieu, venu de divers horizons. Nous remercions Dieu de nous permettre de voir l\’histoire du salut s\’accomplir sous nos yeux.`,`Nous regardons en arrière pour voir ce que Dieu a fait à l’époque des apôtres et des prophètes bibliques. Nous regardons également en avant, pour découvrir ce que Dieu fera dans les temps à venir. Mais surtout, en tant que vrais croyants vivant dans la présence constante de Dieu, nous reconnaissons que notre époque fait partie de l\’histoire du salut. Cette histoire s\’accomplit selon les promesses de Sa Parole. Et nous ne faisons pas que la reconnaître : nous y participons pleinement.`,`Nous avons entendu l\’appel à sortir. Nous sommes sortis. Nous attendons maintenant le retour de notre Maître et Seigneur, Jésus-Christ. Nous nous y préparons avec le plus grand sérieux.`,`C\’est pourquoi nous annonçons cette bonne nouvelle aux autres : « L\’Époux vient, sortez à Sa rencontre. »` ]
       },
       {
         lang: 'en',
@@ -685,7 +674,7 @@ export const mockAdminEntities : Entity[] = [
     bookMetadata: {
       id: "7c3eec26-0c02-4a8b-86a3-61f9bca37062",
       author: "Marie Giraud",
-      plublishAt: new Date("2025-10-14T10:00:00Z"),
+      publishAt: new Date("2025-10-14T10:00:00Z"),
     },
     eventMetadata: {
       id: "7c3eec26-0c02-4a8b-86a3-61f9bca37062",
@@ -703,7 +692,7 @@ export const mockAdminEntities : Entity[] = [
     bookMetadata: {
       id: "a4b2c6dd-5e2e-4f13-9e34-6c4d14f5b77b",
       author: "David N'Guessan",
-      plublishAt: new Date("2025-02-14T10:00:00Z")
+      publishAt: new Date("2025-02-14T10:00:00Z")
     }
   }
 ];
@@ -712,7 +701,7 @@ export const mockAdminMediaVersions: MediaVersion[] = [
   {
     id: "mv-001-fr",
     documentId: "f1012f1e-a09e-49d7-a2d1-90be962a1a1c",
-    language: "frn",
+    languageId: "fr",
     title: "Marcher dans la lumière",
     description: "Un sermon inspirant sur la foi et la marche quotidienne avec Dieu.",
     publishedAt: new Date("2025-04-15T09:00:00Z")
@@ -720,7 +709,7 @@ export const mockAdminMediaVersions: MediaVersion[] = [
     {
     id: "mv-002-en",
     documentId: "a4b2c6dd-5e2e-4f13-9e34-6c4d14f5b77b",
-    language: "eng",
+    languageId: "en",
     title: "The Parables of Jesus Explained",
     description: "A clear and insightful look at the parables and their relevance today.",
     publishedAt: new Date("2025-05-10T12:30:00Z")
@@ -728,7 +717,7 @@ export const mockAdminMediaVersions: MediaVersion[] = [
   {
     id: "mv-003-es",
     documentId: "7c3eec26-0c02-4a8b-86a3-61f9bca37062",
-    language: "esp",
+    languageId: "es",
     title: "Despertar espiritual 2025",
     description: "Una conferencia transformadora para toda la comunidad de fe.",
     publishedAt: new Date("2025-06-01T14:00:00Z")
@@ -736,7 +725,7 @@ export const mockAdminMediaVersions: MediaVersion[] = [
   {
     id: "mv-004-de",
     documentId: "f1012f1e-a09e-49d7-a2d1-90be962a1a1c",
-    language: "deu",
+    languageId: "de",
     title: "Im Licht wandeln",
     description: "Eine Predigt über das Leben im Licht Gottes und die tägliche Nachfolge.",
     publishedAt: new Date("2025-04-18T10:00:00Z")
@@ -744,7 +733,7 @@ export const mockAdminMediaVersions: MediaVersion[] = [
   {
     id: "mv-005-pt",
     documentId: "a4b2c6dd-5e2e-4f13-9e34-6c4d14f5b77b",
-    language: "pt",
+    languageId: "pt",
     title: "As Parábolas de Jesus Explicadas",
     description: "Uma abordagem acessível às parábolas bíblicas e seu significado espiritual.",
     publishedAt: new Date("2025-05-15T16:00:00Z")
@@ -777,22 +766,22 @@ export const mockAdminMediaSupport: MediaSupport[] = [
 
 export const mockAdminLanguages: Language[] = [
   {
-    id: "frn",
+    id: "fr",
     title: "Français",
     type: LanguageType.INTERNATIONAL,
   },
   {
-    id: "eng",
+    id: "en",
     title: "English",
     type: LanguageType.INTERNATIONAL,
   },
   {
-    id: "esp",
+    id: "es",
     title: "Español",
     type: LanguageType.INTERNATIONAL,
   },
   {
-    id: "ptg",
+    id: "pt",
     title: "Português",
     type: LanguageType.INTERNATIONAL,
   },

@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useBooksData } from '../hooks/useData';
 import { ContentTranslations } from '../lib/interfacesData';
+import { useDataStore } from '../services/dataService';
 
 export interface Books {
   id: string;
@@ -22,27 +23,17 @@ interface BooksState {
 }
 
 export const useBooksStore = (): BooksState => {
-  const { books, loading, error } = useBooksData();
-  const [state, setState] = useState<BooksState>({
-    books: [],
-    loading: false,
-    error: null,
-    fetchBooks: async () => {}
-  });
-
-  const fetchBooks = useCallback(async () => {
-    setState(prev => ({ ...prev, loading: true, error: null }));
-    try {
-      setState(prev => ({ ...prev, books, loading: false }));
-    } catch (error) {
-      setState(prev => ({ ...prev, error: 'Failed to fetch books', loading: false }));
-    }
-  }, [books]);
+  const { books, loading, error, fetchData } = useDataStore(state => ({
+    books: state.books,
+    loading: state.loading,
+    error: state.error,
+    fetchData: state.fetchData,
+  }));
 
   return {
     books,
     loading,
     error,
-    fetchBooks
+    fetchBooks: fetchData,
   };
 };

@@ -16,7 +16,7 @@ const Footer = () => {
           {/* Column 1: About */}
           <div>
             <div className="mb-4">
-              <Logo className="h-12 w-auto" />
+              <Logo className="h-12 w-auto" admin={true}/>
             </div>
             <p className="text-neutral-300 mb-4">
               {t('footer.about')}

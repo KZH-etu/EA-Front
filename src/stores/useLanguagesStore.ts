@@ -1,6 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useAboutData, useLanguagesData } from '../hooks/useData';
 import { ContentTranslations } from '../lib/interfacesData';
+import { useDataStore } from '../services/dataService';
 
 export enum LanguageType {
   INTERNATIONAL = 'International',
@@ -24,49 +25,25 @@ interface LanguageStore {
   deleteLanguage: (id: string) => Promise<void>;
 }
 
-export const useLanguagesStore = (): LanguageStore => {
-  const { languages, loading, error, addItem, updateItem, deleteItem } = useLanguagesData();
-  const [state, setState] = useState<LanguageStore>({
-    languages: [],
-    loading: false,
-    error: null,
-    fetchLanguages: async () => {},
-    addLanguage: async () => {},
-    updateLanguage: async () => {},
-    deleteLanguage: async () => {}
-  });
+export const useLanguagesStore = () : LanguageStore => {
+  const { languages, loading, error, fetchData, addItem, updateItem, deleteItem} = useDataStore(state => ({
+    languages: state.languages,
+    loading: state.loading,
+    error: state.error,
+    fetchData: state.fetchData,
+    addItem: state.addItem,
+    updateItem: state.updateItem,
+    deleteItem: state.deleteItem,
+  }));
 
-  const fetchLanguages = useCallback(async () => {
-    setState(prev => ({ ...prev, loading: true, error: null }));
-    try {
-      setState(prev => ({ ...prev, languages, loading: false }));
-    } catch (error) {
-      setState(prev => ({ ...prev, error: 'Failed to fetch tags', loading: false }));
-    }
-  }, [languages]);
-
-  const addLanguage = useCallback(async (language: Language) => {
-    await addItem('languages', language);
-    fetchLanguages();
-  }, [fetchLanguages]);
-
-  const updateLanguage = useCallback(async (id: string, language: Partial<Language>) => {
-    await updateItem('languages', id, language);
-    fetchLanguages();
-  }, [fetchLanguages]);
-
-  const deleteLanguage = useCallback(async (id: string) => {
-    await deleteItem('languages', id);
-    fetchLanguages();
-  }, [fetchLanguages]);
-
+  // fetchData charge tout, donc tu peux l'utiliser pour rafraîchir les sermons si besoin
   return {
     languages,
     loading,
     error,
-    fetchLanguages,
-    addLanguage,
-    updateLanguage,
-    deleteLanguage
+    fetchLanguages: fetchData,
+    addLanguage: (language: Language) => addItem('languages', language),
+    updateLanguage: (id: string, language: Partial<Language>) => updateItem('languages', id, language),
+    deleteLanguage: (id: string) => deleteItem('languages', id),
   };
 };

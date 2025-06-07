@@ -1,5 +1,4 @@
-import { useState, useCallback } from 'react';
-import { useEntitiesData, useSermonsData } from '../hooks/useData';
+import { useDataStore } from '../services/dataService';
 
 type EventType = 'CONFERENCE' | 'SEMINAR' | 'MEETING';
 
@@ -11,7 +10,7 @@ export interface Entity {
   bookMetadata?: {
     id: string;
     author: string;
-    plublishAt?: Date;
+    publishAt?: Date;
   };
   sermonMetadata?: {
     id: string;
@@ -39,48 +38,34 @@ interface EntitiesState {
 }
 
 export const useEntitiesStore = (): EntitiesState => {
-  const { entities, loading, error, addItem, updateItem, deleteItem } = useEntitiesData();
-  const [state, setState] = useState<EntitiesState>({
-    entities: [],
-    loading: false,
-    error: null,
-    fetchEntities: async () => {},
-    addEntity: async () => {},
-    updateEntity: async () => {},
-    deleteEntity: async () => {}
-  });
+  const {
+    entities,
+    loading,
+    error,
+    fetchData,
+    addItem,
+    updateItem,
+    deleteItem,
+  } = useDataStore(state => ({
+    entities: state.entities,
+    loading: state.loading,
+    error: state.error,
+    fetchData: state.fetchData,
+    addItem: state.addItem,
+    updateItem: state.updateItem,
+    deleteItem: state.deleteItem,
+  }));
 
-  const fetchEntities = useCallback(async () => {
-    setState(prev => ({ ...prev, loading: true, error: null }));
-    try {
-      setState(prev => ({ ...prev, entities, loading: false }));
-    } catch (error) {
-      setState(prev => ({ ...prev, error: 'Failed to fetch entities', loading: false }));
-    }
-  }, [entities]);
-
-  const addEntity = useCallback(async (entity: Entity) => {
-    await addItem('entities', entity);
-    fetchEntities();
-  }, [addItem, fetchEntities]);
-
-  const updateEntity = useCallback(async (id: string, entity: Partial<Entity>) => {
-    await updateItem('entities', id, entity);
-    fetchEntities();
-  }, [updateItem, fetchEntities]);
-
-  const deleteEntity = useCallback(async (id: string) => {
-    await deleteItem('entities', id);
-    fetchEntities();
-  }, [deleteItem, fetchEntities]);
+  console.log('Entities Store:', {
+    entities,});
 
   return {
     entities,
     loading,
     error,
-    fetchEntities,
-    addEntity,
-    updateEntity,
-    deleteEntity
+    fetchEntities: fetchData,
+    addEntity: (entity) => addItem('entities', entity),
+    updateEntity: (id, entity) => updateItem('entities', id, entity),
+    deleteEntity: (id) => deleteItem('entities', id),
   };
 };
