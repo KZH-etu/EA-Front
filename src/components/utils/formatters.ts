@@ -13,9 +13,12 @@ interface MappingProps {
 
 
 export const mapSermons = ({ entities, versions, medias }: MappingProps): Sermon[] => {
+  console.log('mapSermons called', { entities, versions, medias });
   return entities.flatMap(entity => {
     const entityVersions = versions.filter(v => v.documentId === entity.id);
-    const entityMedias = entityVersions.flatMap(v => medias.filter(m => m.mediaVersionId === v.id));
+    const entityMedias = entityVersions.flatMap(v => medias.filter(m => m.documentVersionId === v.id));
+
+    console.log('entityMedias', entityMedias);
 
     // Génère un sermon audio si au moins un mediaType AUDIO
     const sermons: Sermon[] = [];
@@ -26,7 +29,7 @@ export const mapSermons = ({ entities, versions, medias }: MappingProps): Sermon
         lang: v.languageId,
         title: v.title,
         description: v.description || '',
-        url: entityMedias.find(m => m.mediaVersionId === v.id && m.mediaType === MediaType.AUDIO)?.url || '',
+        url: entityMedias.find(m => m.documentVersionId === v.id && m.mediaType === MediaType.AUDIO)?.url || '',
       }));
       sermons.push({
         id: entity.id,
@@ -49,12 +52,12 @@ export const mapSermons = ({ entities, versions, medias }: MappingProps): Sermon
         lang: v.languageId,
         title: v.title,
         description: v.description || '',
-        url: entityMedias.find(m => m.mediaVersionId === v.id && m.mediaType === MediaType.VIDEO)?.url || '',
+        url: entityMedias.find(m => m.documentVersionId === v.id && m.mediaType === MediaType.VIDEO)?.url || '',
       }));
       sermons.push({
         id: entity.id,
         preacher: entity.sermonMetadata?.preacher || '',
-        date: entity.sermonMetadata?.preachedAt?.toISOString?.() || '',
+        date: entity.sermonMetadata?.preachedAt || '',
         type: MediaType.VIDEO,
         duration: '',
         tags: entity.tagIds || [],
@@ -65,6 +68,7 @@ export const mapSermons = ({ entities, versions, medias }: MappingProps): Sermon
       } as Sermon);
     }
 
+    console.log('Mapped sermons for entity', entity.id, sermons);
     return sermons;
   });
 };
@@ -73,7 +77,7 @@ export const mapBooks = ({ entities, versions, medias }: MappingProps): Books[] 
   return entities
     .map(entity => {
       const entityVersions = versions.filter(v => v.documentId === entity.id);
-      const entityMedias = entityVersions.flatMap(v => medias.filter(m => m.mediaVersionId === v.id));
+      const entityMedias = entityVersions.flatMap(v => medias.filter(m => m.documentVersionId === v.id));
       // Un book doit avoir au moins un mediaType TEXT
       if (!entityMedias.some(m => m.mediaType === MediaType.TEXT)) return null;
 
@@ -91,7 +95,7 @@ export const mapBooks = ({ entities, versions, medias }: MappingProps): Books[] 
         lang: v.languageId,
         title: v.title,
         description: v.description || '',
-        url: entityMedias.find(m => m.mediaVersionId === v.id && m.mediaType === MediaType.TEXT)?.url || '',
+        url: entityMedias.find(m => m.documentVersionId === v.id && m.mediaType === MediaType.TEXT)?.url || '',
       }));
 
       return {
