@@ -35,7 +35,9 @@ function isYoutubeUrl(url: string) {
 
 type FormFields = {
   textTitle?: string;
+  textUrl?: string;
   audioTitle?: string;
+  audioUrl?: string;
   videoTitle?: string;
   videoUrl: string;
 };
@@ -52,16 +54,20 @@ export function MediaSupportForm({ entities, initialData, mediaVersions, onSubmi
 
   // Champs pour chaque MediaType
   const { register, handleSubmit, setValue, reset, watch, formState: { errors } } = useForm<FormFields>({
-      defaultValues: initialData
+    defaultValues: initialData
       ? {
           textTitle: initialData.mediaType === MediaType.TEXT ? initialData.title : '',
+          textUrl: initialData.mediaType === MediaType.TEXT ? initialData.url : '',
           audioTitle: initialData.mediaType === MediaType.AUDIO ? initialData.title : '',
+          audioUrl: initialData.mediaType === MediaType.AUDIO ? initialData.url : '',
           videoTitle: initialData.mediaType === MediaType.VIDEO ? initialData.title : '',
           videoUrl: initialData.mediaType === MediaType.VIDEO ? initialData.url : '',
         }
       : {
           textTitle: '',
+          textUrl: '',
           audioTitle: '',
+          audioUrl: '',
           videoTitle: '',
           videoUrl: '',
         }
@@ -70,7 +76,7 @@ export function MediaSupportForm({ entities, initialData, mediaVersions, onSubmi
   // Si initialData change (édition), on reset le formulaire
   useEffect(() => {
     if (initialData) {
-      const version = mediaVersions.find(v => v.id === initialData.mediaVersionId);
+      const version = mediaVersions.find(v => v.id === initialData.documentVersionId);
       setSelectedEntityId(version?.documentId ?? '');
       setSelectedMediaVersionId(version?.id ?? '');
       reset({
@@ -107,32 +113,33 @@ export function MediaSupportForm({ entities, initialData, mediaVersions, onSubmi
 
   // Validation globale
   const videoUrl = watch('videoUrl');
+  const audioUrl = watch('audioUrl');
+  const textUrl = watch('textUrl');
   const isVideoValid = !!selectedMediaVersionId && isYoutubeUrl(videoUrl);
-  const isTextValid = !!selectedMediaVersionId && !!textFile;
-  const isAudioValid = !!selectedMediaVersionId && !!audioFile;
+  const isTextValid = !!selectedMediaVersionId && !!textUrl;
+  const isAudioValid = !!selectedMediaVersionId && !!audioUrl;
   const isFormValid = isTextValid || isAudioValid || isVideoValid;
+
 
   return (
     <form
       onSubmit={handleSubmit((data) => {
-        const supports: MediaSupport[] = []
-          // Ajoute TEXT seulement si un fichier a été choisi (jamais le cas ici)
+        const supports: MediaSupport[] = [];
         if (isTextValid) {
           supports.push({
             id: initialData?.mediaType === MediaType.TEXT ? initialData.id : '',
-            mediaVersionId: selectedMediaVersionId,
+            documentVersionId: selectedMediaVersionId,
             mediaType: MediaType.TEXT,
-            url: '', // à gérer plus tard
+            url: data.textUrl || '',
             title: data.textTitle || '',
           });
         }
-        // Ajoute AUDIO seulement si un fichier a été choisi (jamais le cas ici)
         if (isAudioValid) {
           supports.push({
             id: initialData?.mediaType === MediaType.AUDIO ? initialData.id : '',
-            mediaVersionId: selectedMediaVersionId,
+            documentVersionId: selectedMediaVersionId,
             mediaType: MediaType.AUDIO,
-            url: '', // à gérer plus tard
+            url: data.audioUrl || '',
             title: data.audioTitle || '',
           });
         }
@@ -140,7 +147,7 @@ export function MediaSupportForm({ entities, initialData, mediaVersions, onSubmi
         if (isVideoValid) {
           supports.push({
             id: initialData?.mediaType === MediaType.VIDEO ? initialData.id : '',
-            mediaVersionId: selectedMediaVersionId,
+            documentVersionId: selectedMediaVersionId,
             mediaType: MediaType.VIDEO,
             url: data.videoUrl,
             title: data.videoTitle || '',
@@ -218,26 +225,12 @@ export function MediaSupportForm({ entities, initialData, mediaVersions, onSubmi
       {/* Partie TEXT */}
       <div className="border rounded p-4 mb-2">
         <div className="font-semibold mb-2">📘 Support Texte</div>
-        <div className="flex items-center gap-2 mb-2">
-          {/* <input
-            type="file"
-            accept=".pdf,.doc,.docx,.txt"
-            className="hidden"
-            id="textFileInput"
-            onChange={e => {
-              if (e.target.files && e.target.files.length > 0) {
-                // Logique pour gérer le fichier texte
-                console.log('Fichier texte sélectionné:', e.target.files[0]);
-              }
-            }}
-          /> */}
-          <button type="button" className="btn" disabled>
-            Choisir un fichier texte
-          </button>
-          <span className="text-xs text-neutral-500">Le fichier sera ajouté via le backend ultérieurement.
-            <span className="text-warning-600">Impossible d’ajouter un support audio tant que le choix de fichier n’est pas disponible.</span>
-          </span>
-        </div>
+        <input
+          className="form-input w-full mb-2"
+          placeholder="URL du fichier texte (PDF, DOC, etc.)"
+          {...register('textUrl')}
+          defaultValue={initialData?.mediaType === MediaType.TEXT ? initialData.url : ''}
+        />
         <input
           className="form-input w-full"
           placeholder="Titre du texte (optionnel)"
@@ -249,26 +242,12 @@ export function MediaSupportForm({ entities, initialData, mediaVersions, onSubmi
       {/* Partie AUDIO */}
       <div className="border rounded p-4 mb-2">
         <div className="font-semibold mb-2">🔊 Support Audio</div>
-        <div className="flex items-center gap-2 mb-2">
-          {/* <input
-            type="file"
-            accept="audio/*"
-            className="hidden"
-            id="audioFileInput"
-            onChange={e => {
-              if (e.target.files && e.target.files.length > 0) {
-                // Logique pour gérer le fichier audio
-                console.log('Fichier audio sélectionné:', e.target.files[0]);
-              }
-            }}
-          /> */}
-          <button type="button" className="btn" disabled>
-            Choisir un fichier audio
-          </button>
-          <span className="text-xs text-neutral-500">Le fichier sera ajouté via le backend ultérieurement.
-            <span className="text-warning-600">Impossible d’ajouter un support texte tant que le choix de fichier n’est pas disponible.</span>
-          </span>
-        </div>
+        <input
+          className="form-input w-full mb-2"
+          placeholder="URL du fichier audio (mp3, wav, etc.)"
+          {...register('audioUrl')}
+          defaultValue={initialData?.mediaType === MediaType.AUDIO ? initialData.url : ''}
+        />
         <input
           className="form-input w-full"
           placeholder="Titre de l'audio (optionnel)"
@@ -303,9 +282,7 @@ export function MediaSupportForm({ entities, initialData, mediaVersions, onSubmi
       {/* Validation globale */}
       {!isFormValid && (
         <div className="text-error text-sm">
-          Veuillez sélectionner une entité, une version traduite, et renseigner une URL YouTube valide pour la vidéo.
-          <br />
-          <span className="text-warning-600">L’ajout de fichiers texte ou audio sera possible ultérieurement.</span>
+          Veuillez sélectionner une entité, une version traduite, et renseigner une URL valide pour au moins un support.
         </div>
       )}
 

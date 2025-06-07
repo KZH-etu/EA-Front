@@ -1,5 +1,3 @@
-import { useState, useCallback } from 'react';
-import { useTagsData } from '../hooks/useData';
 import { ContentTranslations } from '../lib/interfacesData';
 import { useDataStore } from '../services/dataService';
 

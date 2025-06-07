@@ -1,5 +1,4 @@
 import { subDays } from 'date-fns';
-import { de, tr } from 'date-fns/locale';
 import { Entity } from '../stores/useEntitiesStore';
 import { MediaVersion } from '../stores/useMediaVersionStore';
 import { MediaSupport, MediaType } from '../stores/useMediaSupportStore';
@@ -743,21 +742,21 @@ export const mockAdminMediaVersions: MediaVersion[] = [
 export const mockAdminMediaSupport: MediaSupport[] = [
   {
     id: '1',
-    mediaVersionId: "mv-001-fr",
+    documentVersionId: "mv-001-fr",
     mediaType: MediaType.TEXT,
     url: "",
     title: "Texte en français"
   },
   {
     id: '2',
-    mediaVersionId: "mv-002-en",
+    documentVersionId: "mv-002-en",
     mediaType: MediaType.AUDIO,
     url: "",
     title: "Lecture audio"
   },
   {
     id: '3',
-    mediaVersionId: "mv-002-en",
+    documentVersionId: "mv-002-en",
     mediaType: MediaType.VIDEO,
     url: "https://www.youtube.com/embed/4y3n3IdH0rY?si=81PKWo467a9L84Hd",
     title: "Vidéo YouTube"

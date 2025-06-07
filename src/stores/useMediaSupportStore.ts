@@ -8,7 +8,7 @@ export enum MediaType {
 
 export interface MediaSupport {
   id: string;
-  mediaVersionId: string;
+  documentVersionId: string;
   mediaType: MediaType;
   url: string;
   title?: string;

@@ -67,10 +67,12 @@ const MediaSupportPage = () => {
   const getMediaTypesForEntity = (entityId: string) => {
     const versions = mediaVersions.filter(v => v.documentId === entityId);
     const versionIds = versions.map(v => v.id);
+    console.log('versionIds pour l’entité', entityId, versionIds);
+    console.log('mediaSupports pour l’entité', entityId, mediaSupports);
     const types = Array.from(
       new Set(
         mediaSupports
-          .filter(s => versionIds.includes(s.mediaVersionId))
+          .filter(s => versionIds.includes(s.documentVersionId))
           .map(s => s.mediaType)
       )
     );
@@ -79,13 +81,15 @@ const MediaSupportPage = () => {
 
   // Récupère les MediaVersions pour une entité
   const getVersionsForEntity = (entityId: string) => {
-    console.log(entityId, mediaVersions);
-    mediaVersions.filter(v => v.documentId === entityId);
+    console.log('entitéId et mediaVersion', entityId, mediaVersions);
+    return mediaVersions.filter(v => v.documentId === entityId);
   }
 
   // Récupère les MediaSupports pour une version
-  const getSupportsForVersion = (versionId: string) =>
-    mediaSupports.filter(s => s.mediaVersionId === versionId);
+  const getSupportsForVersion = (versionId: string) => {
+    console.log('versionId et mediaSupport',versionId, mediaSupports);
+    return mediaSupports.filter(s => s.documentVersionId === versionId);
+  }
 
   const handleFormSubmit = async (supports: MediaSupport[]) => {
     setSubmitting(true);
@@ -223,7 +227,7 @@ const MediaSupportPage = () => {
                               </tr>
                             </thead>
                             <tbody>
-                              {getVersionsForEntity(entity.id).map(version => 
+                              {getVersionsForEntity(entity.id).flatMap(version => 
                                 getSupportsForVersion(version.id).map(support => 
                                   {
                                   return(
@@ -235,9 +239,21 @@ const MediaSupportPage = () => {
                                     <td className="px-4 py-2">{MEDIA_TYPE_LABELS[support.mediaType]}</td>
                                     <td className="px-4 py-2">{support.title || <span className="text-neutral-400">-</span>}</td>
                                     <td className="px-4 py-2">
-                                      {support.mediaType === MediaType.VIDEO && support.url ? (
-                                        <a href={support.url} target="_blank" rel="noopener noreferrer" className="text-primary-600 flex items-center gap-1">
-                                          <LinkIcon size={16} /> Vidéo
+                                      {support.url ? (
+                                        <a
+                                          href={support.url}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="text-primary-600 flex items-center gap-1"
+                                        >
+                                          <LinkIcon size={16} />
+                                          {support.mediaType === MediaType.VIDEO
+                                            ? 'Vidéo'
+                                            : support.mediaType === MediaType.AUDIO
+                                            ? 'Audio'
+                                            : support.mediaType === MediaType.TEXT
+                                            ? 'Texte'
+                                            : 'Lien'}
                                         </a>
                                       ) : (
                                         <span className="text-neutral-400">-</span>

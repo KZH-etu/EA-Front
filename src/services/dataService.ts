@@ -11,7 +11,9 @@ import { createDocument, deleteDocument, fetchDocuments, updateDocument } from '
 import { createDocumentVersion, deleteDocumentVersion, fetchDocumentVersions, updateDocumentVersion } from './documentVersionService';
 import { createDocumentMedia, deleteDocumentMedia, fetchDocumentMedias, updateDocumentMedia } from './documentMediaService';
 import { mapBooks, mapSermons } from '../components/utils/formatters';
-import { createTag, deleteTag, updateTag } from './tagService';
+import { createTag, deleteTag, fetchTags, updateTag } from './tagService';
+import { Language } from '../stores/useLanguagesStore';
+import { createLanguage, deleteLanguage, fetchLanguages, updateLanguage } from './languageservice';
 
 // Central store for all data
 interface DataState {
@@ -22,7 +24,7 @@ interface DataState {
   books: Books[];
   events: Event[];
   tags: Tags[];
-  languages: typeof mockAdminLanguages;
+  languages: Language[];
   subscribers: typeof mockAdminSubscribers;
   stats: any;
   aboutSections: typeof mockAdminAboutSections;
@@ -87,18 +89,20 @@ export const useDataStore = create<DataStore>((set, get) => ({
     set({ loading: true, error: null });
     try {
       console.log('Fetching data...');
-      const [entities , mediaVersions, mediaSupports] = await Promise.all([
+      const [entities , mediaVersions, mediaSupports, tags, languages] = await Promise.all([
         fetchDocuments(),
         fetchDocumentVersions(),
-        fetchDocumentMedias()
+        fetchDocumentMedias(),
+        fetchTags(),
+        fetchLanguages()
       ]);
       set({
         entities,
         mediaVersions,
         mediaSupports,
         events: mockAdminEvents,
-        tags: mockAdminTags,
-        languages: mockAdminLanguages,
+        tags,
+        languages,
         subscribers: mockAdminSubscribers,
         stats: mockAdminStats,
         books: mapBooks({entities, versions: mediaVersions, medias: mediaSupports}),
@@ -127,6 +131,9 @@ export const useDataStore = create<DataStore>((set, get) => ({
         case 'tags':
           await createTag(item as Tags);
           break;
+        case 'languages':
+          await createLanguage(item as Language);
+          break;
       }
       await get().fetchData();
     } catch (error) {
@@ -147,8 +154,11 @@ export const useDataStore = create<DataStore>((set, get) => ({
         case 'tags':
           await updateTag(id, item as Partial<Tags>);
           break;
-          case 'entities':
+        case 'entities':
           await updateDocument(id, item as Partial<Entity>);
+          break;
+        case 'languages':
+          await updateLanguage(id, item as Partial<Language>);
           break;
       }
       // Ajoute ici les autres types si besoin
@@ -171,8 +181,11 @@ export const useDataStore = create<DataStore>((set, get) => ({
         case 'tags':
           await deleteTag(id);
           break;
-          case 'entities':
+        case 'entities':
           await deleteDocument(id);
+          break;
+        case 'languages':
+          await deleteLanguage(id);
           break;
       }
       // Ajoute ici les autres types si besoin

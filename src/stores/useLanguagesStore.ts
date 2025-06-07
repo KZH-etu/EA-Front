@@ -36,7 +36,6 @@ export const useLanguagesStore = () : LanguageStore => {
     deleteItem: state.deleteItem,
   }));
 
-  // fetchData charge tout, donc tu peux l'utiliser pour rafraîchir les sermons si besoin
   return {
     languages,
     loading,
