@@ -9,7 +9,9 @@ import {
   MessageSquare, 
   LogOut, 
   Tag,
-  Info
+  Info,
+  Activity,
+  Languages
 } from 'lucide-react';
 
 interface AdminSidebarProps {
@@ -57,7 +59,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar }: AdminSidebarProps) => {
           </NavLink>
           
           <NavLink
-            to="/admin/sermons"
+            to="/admin/entities"
             className={({ isActive }) => 
               `flex items-center py-3 px-4 rounded-md transition-colors ${
                 isActive 
@@ -68,11 +70,11 @@ const AdminSidebar = ({ isOpen, toggleSidebar }: AdminSidebarProps) => {
             onClick={() => window.innerWidth < 1024 && toggleSidebar()}
           >
             <Book size={18} className="mr-3" />
-            <span>Sermons</span>
+            <span>Entités</span>
           </NavLink>
           
           <NavLink
-            to="/admin/books"
+            to="/admin/mediaVersion"
             className={({ isActive }) => 
               `flex items-center py-3 px-4 rounded-md transition-colors ${
                 isActive 
@@ -83,7 +85,22 @@ const AdminSidebar = ({ isOpen, toggleSidebar }: AdminSidebarProps) => {
             onClick={() => window.innerWidth < 1024 && toggleSidebar()}
           >
             <FileText size={18} className="mr-3" />
-            <span>Livres et Brochures</span>
+            <span>Version des média</span>
+          </NavLink>
+
+          <NavLink
+            to="/admin/mediaSupport"
+            className={({ isActive }) => 
+              `flex items-center py-3 px-4 rounded-md transition-colors ${
+                isActive 
+                  ? 'bg-primary-700 text-white' 
+                  : 'text-primary-100 hover:bg-primary-700 hover:text-white'
+              }`
+            }
+            onClick={() => window.innerWidth < 1024 && toggleSidebar()}
+          >
+            <Activity size={18} className="mr-3" />
+            <span>Nature des média</span>
           </NavLink>
           
           <NavLink
@@ -147,7 +164,7 @@ const AdminSidebar = ({ isOpen, toggleSidebar }: AdminSidebarProps) => {
           </NavLink>
 
           <NavLink
-            to="/admin/about"
+            to="/admin/language"
             className={({ isActive }) => 
               `flex items-center py-3 px-4 rounded-md transition-colors ${
                 isActive 
@@ -157,8 +174,8 @@ const AdminSidebar = ({ isOpen, toggleSidebar }: AdminSidebarProps) => {
             }
             onClick={() => window.innerWidth < 1024 && toggleSidebar()}
           >
-            <Info size={18} className="mr-3" />
-            <span>À Propos</span>
+            <Languages size={18} className="mr-3" />
+            <span> Langues </span>
           </NavLink>
         </div>
         

@@ -16,6 +16,7 @@ import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import { Event } from '../../stores/useEventsStore';
+import EventTranslationsForm from '../../components/admin/EventTranslationsForm';
 
 const EventsPage = () => {
   const { events, loading, error, addItem, updateItem, deleteItem } = useAdminStore();
@@ -86,7 +87,11 @@ const EventsPage = () => {
     setTranslations(
     ['fr', 'en', 'es'].map(lang => {
       const tr = event.translations.find(t => t.lang === lang);
-      return { lang, title: tr?.title || '', description: tr?.description ||, is_auto_translated: false};
+      let description = tr?.description || '';
+      if (Array.isArray(description)) {
+        description = description.join(' ');
+      }
+      return { lang, title: tr?.title || '', description, is_auto_translated: false };
     })
   );
     reset({
@@ -206,7 +211,7 @@ const EventsPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg"
+            className="bg-white rounded-lg shadow-xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto"
           >
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-xl font-bold">
@@ -225,7 +230,7 @@ const EventsPage = () => {
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div>
+              {/* <div>
                 <label htmlFor="title" className="block text-sm font-medium text-neutral-700 mb-1">
                   Titre
                 </label>
@@ -241,7 +246,7 @@ const EventsPage = () => {
                 {errors.title && (
                   <p className="mt-1 text-sm text-error">{errors.title.message}</p>
                 )}
-              </div>
+              </div> */}
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -299,7 +304,7 @@ const EventsPage = () => {
                 )}
               </div>
 
-              <div>
+              {/* <div>
                 <label htmlFor="description" className="block text-sm font-medium text-neutral-700 mb-1">
                   Description
                 </label>
@@ -312,7 +317,11 @@ const EventsPage = () => {
                     {...register('description')}
                   />
                 </div>
-              </div>
+              </div> */}
+              <EventTranslationsForm
+                translations={translations}
+                onChange={setTranslations}
+              />
 
               <div className="flex justify-end space-x-4 mt-6">
                 <button

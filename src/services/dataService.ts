@@ -1,12 +1,16 @@
 import { create } from 'zustand';
-import { mockAdminSermons, mockAdminBooks, mockAdminEvents, mockAdminTags, mockAdminSubscribers, mockAdminStats, mockAdminAboutSections, mockAdminAboutDetails } from '../lib/mockAdminData';
+import { mockAdminSermons, mockAdminBooks, mockAdminEvents, mockAdminTags, mockAdminSubscribers, mockAdminStats, mockAdminAboutSections, mockAdminAboutDetails, mockAdminEntities, mockAdminMediaVersions, mockAdminMediaSupport, mockAdminLanguages } from '../lib/mockAdminData';
 
 // Central store for all data
 interface DataState {
+  mediaSupports: typeof mockAdminMediaSupport;
+  mediaVersions: typeof mockAdminMediaVersions;
+  entities: typeof mockAdminEntities;
   sermons: typeof mockAdminSermons;
   books: typeof mockAdminBooks;
   events: typeof mockAdminEvents;
   tags: typeof mockAdminTags;
+  languages: typeof mockAdminLanguages
   subscribers: typeof mockAdminSubscribers;
   stats: typeof mockAdminStats;
   aboutSections: typeof mockAdminAboutSections;
@@ -45,10 +49,14 @@ const simulateDelay = () => new Promise(resolve => setTimeout(resolve, 500));
 // Create the central data store
 export const useDataStore = create<DataStore>((set, get) => ({
   // Initial state
+  mediaSupports: mockAdminMediaSupport,
+  mediaVersions: mockAdminMediaVersions,
+  entities: mockAdminEntities,
   sermons: mockAdminSermons,
   books: mockAdminBooks,
   events: mockAdminEvents,
   tags: mockAdminTags,
+  languages: mockAdminLanguages,
   subscribers: mockAdminSubscribers,
   stats: mockAdminStats,
   aboutSections: mockAdminAboutSections,
@@ -62,10 +70,14 @@ export const useDataStore = create<DataStore>((set, get) => ({
     try {
       await simulateDelay();
       set({
+        mediaSupports: mockAdminMediaSupport,
+        mediaVersions: mockAdminMediaVersions,
+        entities: mockAdminEntities,
         sermons: mockAdminSermons,
         books: mockAdminBooks,
         events: mockAdminEvents,
         tags: mockAdminTags,
+        languages: mockAdminLanguages,
         subscribers: mockAdminSubscribers,
         stats: mockAdminStats,
         aboutSections: mockAdminAboutSections,
@@ -78,10 +90,15 @@ export const useDataStore = create<DataStore>((set, get) => ({
   },
 
   addItem: async (type, item) => {
+    let newItem = {};
     set({ loading: true, error: null });
     try {
       await simulateDelay();
-      const newItem = { ...item, id: Math.random().toString(36).substr(2, 9) } as any;
+      if(type !== 'languages'){
+        newItem = { ...item, id: Math.random().toString(36).substr(2, 9) } as any;
+      }else{
+        newItem = { ...item}
+      }
       console.log(`Adding new item to ${type}:`, newItem);
       const currentItems = get()[type] as any[];
       const items = [...currentItems, newItem];

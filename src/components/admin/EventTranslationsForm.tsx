@@ -10,6 +10,7 @@ interface Translation {
   lang: string;
   title: string;
   description: string;
+  is_auto_translated: boolean;
 }
 
 interface Props {

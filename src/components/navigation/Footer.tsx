@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
-import { MapPin, Phone, Mail, Facebook, Youtube, Instagram } from 'lucide-react';
+import { MapPin, Phone, Mail, Facebook, Youtube, Instagram, X } from 'lucide-react';
 import { useTranslation } from '../../hooks/useTranslation';
 import Logo from '../ui/Logo';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTiktok, faXTwitter } from '@fortawesome/free-brands-svg-icons'
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -20,17 +22,21 @@ const Footer = () => {
               {t('footer.about')}
             </p>
             <div className="flex space-x-4">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" 
+              <a href="https://facebook.com/eglisedabidjan" target="_blank" rel="noopener noreferrer" 
                 className="text-white hover:text-primary-400 transition-colors duration-200">
                 <Facebook size={20} />
               </a>
-              <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" 
+              <a href="https://youtube.com/eglisedabidjan" target="_blank" rel="noopener noreferrer" 
                 className="text-white hover:text-primary-400 transition-colors duration-200">
                 <Youtube size={20} />
               </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" 
+              <a href="https://tiktok.com/eglisedabidjan" target="_blank" rel="noopener noreferrer" 
                 className="text-white hover:text-primary-400 transition-colors duration-200">
-                <Instagram size={20} />
+                <FontAwesomeIcon icon={faTiktok} size="1x" />
+              </a>
+              <a href="https://x.com/eglisedabidjan" target="_blank" rel="noopener noreferrer" 
+                className="text-white hover:text-primary-400 transition-colors duration-200">
+                <FontAwesomeIcon icon={faXTwitter} size="1x" />
               </a>
             </div>
           </div>
@@ -83,15 +89,15 @@ const Footer = () => {
             <ul className="space-y-4">
               <li className="flex items-start">
                 <MapPin size={20} className="mr-2 text-primary-400 flex-shrink-0 mt-1" />
-                <span className="text-neutral-300">123 Rue Principale, Abidjan, Côte d'Ivoire</span>
+                <span className="text-neutral-300">Derrière le collège Saint-Augustin, Yopougon Koweit, Abidjan, Côte d'Ivoire</span>
               </li>
               <li className="flex items-center">
                 <Phone size={20} className="mr-2 text-primary-400 flex-shrink-0" />
-                <span className="text-neutral-300">+225 01 23 45 67 89</span>
+                <span className="text-neutral-300">+225 07 07 99 30 37</span>
               </li>
               <li className="flex items-center">
                 <Mail size={20} className="mr-2 text-primary-400 flex-shrink-0" />
-                <span className="text-neutral-300">contact@assemblee-abidjan.org</span>
+                <span className="text-neutral-300">infos@eglisedabidjan.org</span>
               </li>
             </ul>
           </div>

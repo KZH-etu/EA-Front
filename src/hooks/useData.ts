@@ -1,4 +1,4 @@
-import { useDataStore } from '../services/dataService';
+import { useDataStore } from "../services/dataService";
 
 // Custom hook for accessing data store with type safety
 export function useData<T extends keyof ReturnType<typeof useDataStore.getState>>(
@@ -21,6 +21,26 @@ export const useBooksData = () => {
 export const useEventsData = () => {
   const { events, loading, error, addItem, updateItem, deleteItem } = useDataStore();
   return { events, loading, error, addItem, updateItem, deleteItem };
+};
+
+export const useMediaSupportsData = () => {
+  const { mediaSupports, loading, error, addItem, updateItem, deleteItem } = useDataStore();
+  return { mediaSupports, loading, error, addItem, updateItem, deleteItem };
+}
+
+export const useMediaVersionsData = () => {
+  const { mediaVersions, loading, error, addItem, updateItem, deleteItem } = useDataStore();
+  return { mediaVersions, loading, error, addItem, updateItem, deleteItem };
+};
+
+export const useEntitiesData = () => {
+  const { entities, loading, error, addItem, updateItem, deleteItem } = useDataStore();
+  return { entities, loading, error, addItem, updateItem, deleteItem };
+};
+
+export const useLanguagesData = () => {
+  const { languages, loading, error, addItem, updateItem, deleteItem } = useDataStore();
+  return { languages, loading, error, addItem, updateItem, deleteItem };
 };
 
 export const useTagsData = () => {

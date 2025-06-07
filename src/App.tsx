@@ -23,11 +23,12 @@ import WebTVPage from './pages/WebTVPage';
 
 // Admin pages
 import AdminDashboard from './pages/admin/DashboardPage';
-import AdminSermons from './pages/admin/SermonsPage';
-import AdminBooks from './pages/admin/BooksPage';
+import AdminEntities from './pages/admin/EntitiesPage';
+import AdminVersionMedia from './pages/admin/VersionMediaPage';
+import AdminMediaSupport from './pages/admin/MediaSupportPage';
 import AdminTags from './pages/admin/TagsPage';
 import AdminEvents from './pages/admin/EventsPage';
-import AdminAbout from './pages/admin/AboutPage';
+import AdminLanguage from './pages/admin/LanguagesPage';
 import AdminStreams from './pages/admin/StreamsPage';
 import AdminNewsletter from './pages/admin/NewsletterPage';
 import LoginPage from './pages/LoginPage';
@@ -58,11 +59,12 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
-          <Route path="sermons" element={<AdminSermons />} />
-          <Route path="books" element={<AdminBooks />} />
+          <Route path="entities" element={<AdminEntities />} />
+          <Route path="mediaVersion" element={<AdminVersionMedia />} />
+          <Route path="mediaSupport" element={<AdminMediaSupport />} />
           <Route path="tags" element={<AdminTags />} />
           <Route path="events" element={<AdminEvents />} />
-          <Route path="about" element={<AdminAbout />} />
+          <Route path="language" element={<AdminLanguage />} />
           <Route path="streams" element={<AdminStreams />} />
           <Route path="newsletter" element={<AdminNewsletter />} />
         </Route>

@@ -14,15 +14,15 @@ interface LanguageContentFormProps {
   languageContent: Record<string, LanguageContent>;
   onChange: (content: Record<string, LanguageContent>) => void;
   register: UseFormRegister<{
-    type: string;
-    tags: never[];
-    description: string;
-    preacher: string;
-    language: string;
-    title: string;
-    date: string;
-    mediaUrl: string;
-    location: string;
+    type?: string;
+    tags?: never[];
+    description?: string;
+    preacher?: string;
+    language?: string;
+    title?: string;
+    date?: string;
+    mediaUrl?: string;
+    location?: string;
 }>;
   errors: FieldErrors<{
     type: string;

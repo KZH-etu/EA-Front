@@ -54,7 +54,7 @@ class TranslationService {
       return translatedText;
     } catch (error) {
       console.error('Translation error:', error);
-      return text; // Fallback to original text
+      return text;
     }
   }
 

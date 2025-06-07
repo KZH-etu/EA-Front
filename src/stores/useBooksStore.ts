@@ -7,11 +7,10 @@ export interface Books {
   author: string;
   category: string;
   year: number;
-  coverUrl: string;
+  coverUrl?: string;
   tags: string[];
   availableLanguages: string[];
   language: string;
-  location?: string;
   translations: ContentTranslations[];
 }
 

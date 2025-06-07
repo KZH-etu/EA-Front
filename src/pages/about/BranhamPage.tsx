@@ -1,9 +1,9 @@
 import React from 'react';
-import { useAboutStore } from '../../stores/useAboutStore';
 import PageHeader from '../../components/ui/PageHeader';
 import Section from '../../components/ui/Section';
 import { useLanguageStore } from '../../stores/useLanguageStore';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useAboutStore } from '../../stores/useAboutStore';
 
 const BranhamPage = () => {
   const { sections, loading, error } = useAboutStore();

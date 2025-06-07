@@ -2,9 +2,9 @@ import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import PageHeader from '../components/ui/PageHeader';
-import { useAboutStore } from '../stores/useAboutStore';
 import { useLanguageStore } from '../stores/useLanguageStore';
 import { useTranslation } from '../hooks/useTranslation';
+import { useAboutStore } from '../stores/useAboutStore';
 
 const AboutPage = () => {
   const navigate = useNavigate();

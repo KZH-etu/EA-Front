@@ -13,6 +13,9 @@ interface TagsState {
   loading: boolean;
   error: string | null;
   fetchTags: () => Promise<void>;
+  addTag: (tag: Tags) => Promise<void>;
+  updateTag: (id: string, tag: Partial<Tags>) => Promise<void>;
+  deleteTag: (id: string) => Promise<void>;
 }
 
 export const useTagsStore = (): TagsState => {
@@ -21,7 +24,10 @@ export const useTagsStore = (): TagsState => {
     tags: [],
     loading: false,
     error: null,
-    fetchTags: async () => {}
+    fetchTags: async () => {},
+    addTag: async () => {},
+    updateTag: async () => {},
+    deleteTag: async () => {}
   });
 
   const fetchTags = useCallback(async () => {
@@ -33,10 +39,31 @@ export const useTagsStore = (): TagsState => {
     }
   }, [tags]);
 
+  const addTag = useCallback(async (tag: Tags) => {
+    // Assuming there's a function to add a tag in the data layer
+    await useTagsData().addItem('tags', tag);
+    fetchTags();
+  }, [fetchTags]);
+
+  const updateTag = useCallback(async (id: string, tag: Partial<Tags>) => {
+    // Assuming there's a function to update a tag in the data layer
+    await useTagsData().updateItem('tags', id, tag);
+    fetchTags();
+  }, [fetchTags]);
+
+  const deleteTag = useCallback(async (id: string) => {
+    // Assuming there's a function to delete a tag in the data layer
+    await useTagsData().deleteItem('tags', id);
+    fetchTags();
+  }, [fetchTags]);
+
   return {
     tags,
     loading,
     error,
-    fetchTags
+    fetchTags,
+    addTag,
+    updateTag,
+    deleteTag
   };
 };

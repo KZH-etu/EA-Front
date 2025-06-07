@@ -9,6 +9,18 @@ const TagsPage = () => {
   const [editingTag, setEditingTag] = useState<Tags | null>(null);
   const [editedName, setEditedName] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [newTagTranslations, setNewTagTranslations] = useState([
+  { lang: 'fr', title: '' },
+  { lang: 'en', title: '' },
+  { lang: 'es', title: '' },
+]);
+  const [selectedLang, setSelectedLang] = useState('fr');
+  const [editTagTranslations, setEditTagTranslations] = useState([
+  { lang: 'fr', title: '' },
+  { lang: 'en', title: '' },
+  { lang: 'es', title: '' },
+]);
+const [editSelectedLang, setEditSelectedLang] = useState('fr');
 
   const handleAddTag = async (e : React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -76,18 +88,54 @@ const TagsPage = () => {
       )}
 
       <div className="bg-white rounded-lg shadow-sm p-6">
-        <form onSubmit={handleAddTag} className="flex gap-4 mb-8">
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            if (newTagTranslations.every(t => !t.title.trim())) return;
+            setSubmitting(true);
+            try {
+              await addItem('tags', {
+                translations: newTagTranslations.map(t => ({ lang: t.lang, title: t.title.trim() })),
+              });
+              setNewTagTranslations([
+                { lang: 'fr', title: '' },
+                { lang: 'en', title: '' },
+                { lang: 'es', title: '' },
+              ]);
+            } catch (error) {
+              console.error('Failed to add tag:', error);
+            } finally {
+              setSubmitting(false);
+            }
+          }}
+          className="flex gap-4 mb-8 items-center"
+        >
+          <div className="flex gap-2">
+            {['fr', 'en', 'es'].map((lang) => (
+              <button
+                type="button"
+                key={lang}
+                className={`px-2 py-1 rounded ${selectedLang === lang ? 'bg-primary-500 text-white' : 'bg-neutral-200'}`}
+                onClick={() => setSelectedLang(lang)}
+              >
+                {lang.toUpperCase()}
+              </button>
+            ))}
+          </div>
           <input
             type="text"
-            value={newTagName}
-            onChange={(e) => {
-              setNewTagName(e.target.value)}}
-            placeholder="Nouveau tag"
+            value={newTagTranslations.find(t => t.lang === selectedLang)?.title || ''}
+            onChange={e => {
+              setNewTagTranslations(newTagTranslations.map(t =>
+                t.lang === selectedLang ? { ...t, title: e.target.value } : t
+              ));
+            }}
+            placeholder={`Nouveau tag (${selectedLang.toUpperCase()})`}
             className="form-input flex-grow"
             disabled={submitting}
           />
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="btn-primary flex items-center"
             disabled={submitting}
           >
@@ -113,14 +161,34 @@ const TagsPage = () => {
               className="flex items-center justify-between p-4 bg-neutral-50 rounded-lg"
             >
               {editingTag?.id === tag.id ? (
-                <input
-                  type="text"
-                  value={editedName}
-                  onChange={(e) => setEditedName(e.target.value)}
-                  className="form-input flex-grow mr-4"
-                  autoFocus
-                  disabled={submitting}
-                />
+                <div className="flex gap-2 items-center flex-grow">
+                  <div className="flex flex-col flex-grow">
+                    <div className="flex gap-1 mb-1">
+                      {['fr', 'en', 'es'].map(lang => (
+                        <button
+                          type="button"
+                          key={lang}
+                          className={`px-2 py-1 rounded ${editSelectedLang === lang ? 'bg-primary-500 text-white' : 'bg-neutral-200'}`}
+                          onClick={() => setEditSelectedLang(lang)}
+                        >
+                          {lang.toUpperCase()}
+                        </button>
+                      ))}
+                    </div>
+                    <input
+                      type="text"
+                      value={editTagTranslations.find(t => t.lang === editSelectedLang)?.title || ''}
+                      onChange={e => {
+                        setEditTagTranslations(editTagTranslations.map(t =>
+                          t.lang === editSelectedLang ? { ...t, title: e.target.value } : t
+                        ));
+                      }}
+                      className="form-input flex-grow"
+                      autoFocus
+                      disabled={submitting}
+                    />
+                  </div>
+                </div>
               ) : (
                 <span>{tag.translations.find(t => t.lang == 'fr')?.title}</span>
               )}
@@ -129,7 +197,19 @@ const TagsPage = () => {
                 {editingTag?.id === tag.id ? (
                   <>
                     <button
-                      onClick={() => handleUpdateTag(tag.id)}
+                      onClick={async () => {
+                        setSubmitting(true);
+                        try {
+                          await updateItem('tags', tag.id, {
+                            translations: editTagTranslations.map(t => ({ lang: t.lang, title: t.title.trim() })),
+                          });
+                          setEditingTag(null);
+                        } catch (error) {
+                          console.error('Failed to update tag:', error);
+                        } finally {
+                          setSubmitting(false);
+                        }
+                      }}
                       className="p-2 text-primary-600 hover:text-primary-800 disabled:opacity-50"
                       disabled={submitting}
                     >
@@ -148,7 +228,13 @@ const TagsPage = () => {
                     <button
                       onClick={() => {
                         setEditingTag(tag);
-                        setEditedName(tag.translations.find(t => t.lang == 'fr')?.title || '');
+                        setEditTagTranslations(
+                          ['fr', 'en', 'es'].map(lang => ({
+                            lang,
+                            title: tag.translations.find(t => t.lang === lang)?.title || '',
+                          }))
+                        );
+                        setEditSelectedLang('fr');
                       }}
                       className="p-2 text-primary-600 hover:text-primary-800"
                     >

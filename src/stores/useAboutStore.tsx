@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { useAboutData } from '../hooks/useData';
 import { ContentTranslations } from '../lib/interfacesData';
+import { useAboutData } from '../hooks/useData';
 
 interface AboutSection {
   id: string;
@@ -80,7 +80,7 @@ export const useAboutStore = (): AboutStore => {
         ...detail,
         translations: detail.translations.map(t => ({
           ...t,
-          description: t.description ?? ''
+          description: t.description ?? [] as string[]
         }))
       };
       await addItem('aboutDetails', fixedDetail);
@@ -91,7 +91,18 @@ export const useAboutStore = (): AboutStore => {
 
   const updateDetail = useCallback(async (id: string, detail: Partial<AboutDetail>) => {
     try {
-      await updateItem('aboutDetails', id, detail);
+      const fixedDetail = {
+        ...detail,
+        translations: detail.translations
+          ? detail.translations.map(t => ({
+              ...t,
+              description: Array.isArray(t.description)
+                ? t.description.join('\n')
+                : t.description ?? ''
+            }))
+          : undefined
+      };
+      await updateItem('aboutDetails', id, fixedDetail);
     } catch (error) {
       throw new Error('Failed to update detail');
     }
@@ -115,7 +126,16 @@ export const useAboutStore = (): AboutStore => {
 
   const reorderDetails = useCallback(async (details: AboutDetail[]) => {
     try {
-      await reorderItems('aboutDetails', details);
+      const fixedDetails = details.map(detail => ({
+        ...detail,
+        translations: detail.translations.map(t => ({
+          ...t,
+          description: Array.isArray(t.description)
+            ? t.description.join('\n')
+            : t.description ?? ''
+        }))
+      }));
+      await reorderItems('aboutDetails', fixedDetails);
     } catch (error) {
       throw new Error('Failed to reorder details');
     }

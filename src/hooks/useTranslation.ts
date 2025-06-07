@@ -101,7 +101,7 @@ const translations : TranslationInterface = {
       }
     },
     footer: {
-      about: 'L\'Assemblée d\'Abidjan est une église dédiée à la proclamation de la Parole de Dieu et à l\'édification spirituelle de ses membres.',
+      about: 'L\'Eglise d\'Abidjan est une assemblée locale dédiée à la proclamation de la Parole de Dieu et à l\'édification spirituelle des saints.',
       quickLinks: 'Liens Rapides',
       contact: 'Contact',
       newsletter: 'Newsletter',

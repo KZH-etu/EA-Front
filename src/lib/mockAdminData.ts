@@ -1,5 +1,9 @@
 import { subDays } from 'date-fns';
 import { de, tr } from 'date-fns/locale';
+import { Entity } from '../stores/useEntitiesStore';
+import { MediaVersion } from '../stores/useMediaVersionStrore';
+import { MediaSupport, MediaType } from '../stores/useMediaSupportStore';
+import { Language, LanguageType } from '../stores/useLanguagesStore';
 
 export const DEFAULT_PREACHERS = [
   'William Marrion Branham',
@@ -206,45 +210,45 @@ export const mockAdminTags = [
     id: '1',
     language: 'fr',
     translations: [
-      { lang: 'fr', title: 'foi', is_auto_translated: false },
-      { lang: 'en', title: 'faith', is_auto_translated: false },
-      { lang: 'es', title: 'fe', is_auto_translated: false }
+      { lang: 'fr', title: 'foi' },
+      { lang: 'en', title: 'faith' },
+      { lang: 'es', title: 'fe' }
     ]
   },
   {
     id: '2',
     language: 'fr',
     translations: [
-      { lang: 'fr', title: 'prière', is_auto_translated: false },
-      { lang: 'en', title: 'prayer', is_auto_translated: false },
-      { lang: 'es', title: 'oración', is_auto_translated: false }
+      { lang: 'fr', title: 'prière' },
+      { lang: 'en', title: 'prayer' },
+      { lang: 'es', title: 'oración' }
     ]
   },
   {
     id: '3',
     language: 'fr',
     translations: [
-      { lang: 'fr', title: 'doctrine', is_auto_translated: false },
-      { lang: 'en', title: 'doctrine', is_auto_translated: false },
-      { lang: 'es', title: 'doctrina', is_auto_translated: false }
+      { lang: 'fr', title: 'doctrine' },
+      { lang: 'en', title: 'doctrine' },
+      { lang: 'es', title: 'doctrina' }
     ]
   },
   {
     id: '4',
     language: 'fr',
     translations: [
-      { lang: 'fr', title: 'prophétie', is_auto_translated: false },
-      { lang: 'en', title: 'prophecy', is_auto_translated: false },
-      { lang: 'es', title: 'profecía', is_auto_translated: false }
+      { lang: 'fr', title: 'prophétie' },
+      { lang: 'en', title: 'prophecy' },
+      { lang: 'es', title: 'profecía' }
     ]
   },
   {
     id: '5',
     language: 'fr',
     translations: [
-      { lang: 'fr', title: 'église', is_auto_translated: false },
-      { lang: 'en', title: 'church', is_auto_translated: false },
-      { lang: 'es', title: 'iglesia', is_auto_translated: false }
+      { lang: 'fr', title: 'église' },
+      { lang: 'en', title: 'church' },
+      { lang: 'es', title: 'iglesia' }
     ]
   }
 ];
@@ -659,6 +663,140 @@ export const mockAdminAboutDetails = [
     order: 1
   }
 ];
+
+export const mockAdminEntities : Entity[] = [
+  {
+    id: "f1012f1e-a09e-49d7-a2d1-90be962a1a1c",
+    globalTitle: "Marcher dans la lumière",
+    categories: ["Sermon"],
+    tagIds: ["1", "4"],
+    sermonMetadata: {
+      id: "f1012f1e-a09e-49d7-a2d1-90be962a1a1c",
+      preacher: "Pasteur Léa Dubois",
+      preachedAt: new Date("2025-04-14T10:00:00Z"),
+      location: "Église Lumière de Paris"
+    }
+  },
+  {
+    id: "7c3eec26-0c02-4a8b-86a3-61f9bca37062",
+    globalTitle: "Réveil spirituel 2025",
+    categories: ["Événement", "Livre"],
+    tagIds: ["3", "2"],
+    bookMetadata: {
+      id: "7c3eec26-0c02-4a8b-86a3-61f9bca37062",
+      author: "Marie Giraud",
+      plublishAt: new Date("2025-10-14T10:00:00Z"),
+    },
+    eventMetadata: {
+      id: "7c3eec26-0c02-4a8b-86a3-61f9bca37062",
+      type: "CONFERENCE",
+      startTime: new Date("2025-08-20T18:00:00Z"),
+      endTime: new Date("2025-08-23T20:00:00Z"),
+      location: "Palais des Congrès, Lyon"
+    }
+  },
+  {
+    id: "a4b2c6dd-5e2e-4f13-9e34-6c4d14f5b77b",
+    globalTitle: "Les paraboles de Jésus expliquées",
+    categories: ["Livre"],
+    tagIds: ["5", "2"],
+    bookMetadata: {
+      id: "a4b2c6dd-5e2e-4f13-9e34-6c4d14f5b77b",
+      author: "David N'Guessan",
+      plublishAt: new Date("2025-02-14T10:00:00Z")
+    }
+  }
+];
+
+export const mockAdminMediaVersions: MediaVersion[] = [
+  {
+    id: "mv-001-fr",
+    documentId: "f1012f1e-a09e-49d7-a2d1-90be962a1a1c",
+    language: "frn",
+    title: "Marcher dans la lumière",
+    description: "Un sermon inspirant sur la foi et la marche quotidienne avec Dieu.",
+    publishedAt: new Date("2025-04-15T09:00:00Z")
+  },
+    {
+    id: "mv-002-en",
+    documentId: "a4b2c6dd-5e2e-4f13-9e34-6c4d14f5b77b",
+    language: "eng",
+    title: "The Parables of Jesus Explained",
+    description: "A clear and insightful look at the parables and their relevance today.",
+    publishedAt: new Date("2025-05-10T12:30:00Z")
+  },
+  {
+    id: "mv-003-es",
+    documentId: "7c3eec26-0c02-4a8b-86a3-61f9bca37062",
+    language: "esp",
+    title: "Despertar espiritual 2025",
+    description: "Una conferencia transformadora para toda la comunidad de fe.",
+    publishedAt: new Date("2025-06-01T14:00:00Z")
+  },
+  {
+    id: "mv-004-de",
+    documentId: "f1012f1e-a09e-49d7-a2d1-90be962a1a1c",
+    language: "deu",
+    title: "Im Licht wandeln",
+    description: "Eine Predigt über das Leben im Licht Gottes und die tägliche Nachfolge.",
+    publishedAt: new Date("2025-04-18T10:00:00Z")
+  },
+  {
+    id: "mv-005-pt",
+    documentId: "a4b2c6dd-5e2e-4f13-9e34-6c4d14f5b77b",
+    language: "pt",
+    title: "As Parábolas de Jesus Explicadas",
+    description: "Uma abordagem acessível às parábolas bíblicas e seu significado espiritual.",
+    publishedAt: new Date("2025-05-15T16:00:00Z")
+  }
+]
+
+export const mockAdminMediaSupport: MediaSupport[] = [
+  {
+    id: '1',
+    mediaVersionId: "mv-001-fr",
+    mediaType: MediaType.TEXT,
+    url: "",
+    title: "Texte en français"
+  },
+  {
+    id: '2',
+    mediaVersionId: "mv-002-en",
+    mediaType: MediaType.AUDIO,
+    url: "",
+    title: "Lecture audio"
+  },
+  {
+    id: '3',
+    mediaVersionId: "mv-002-en",
+    mediaType: MediaType.VIDEO,
+    url: "https://www.youtube.com/embed/4y3n3IdH0rY?si=81PKWo467a9L84Hd",
+    title: "Vidéo YouTube"
+  }
+]
+
+export const mockAdminLanguages: Language[] = [
+  {
+    id: "frn",
+    title: "Français",
+    type: LanguageType.INTERNATIONAL,
+  },
+  {
+    id: "eng",
+    title: "English",
+    type: LanguageType.INTERNATIONAL,
+  },
+  {
+    id: "esp",
+    title: "Español",
+    type: LanguageType.INTERNATIONAL,
+  },
+  {
+    id: "ptg",
+    title: "Português",
+    type: LanguageType.INTERNATIONAL,
+  },
+]
 
 
 
