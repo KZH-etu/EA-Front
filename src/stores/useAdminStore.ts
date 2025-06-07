@@ -2,11 +2,11 @@ import { useDataStore } from '../services/dataService';
 import { Sermon } from './useSermonsStore';
 import { Books } from './useBooksStore';
 import { Event } from './useEventsStore';
-import { Tags } from './useTagsStore';
+import { Tags } from './useTagStore';
 import { Entity } from './useEntitiesStore';
 import { MediaVersion } from './useMediaVersionStore';
 import { MediaSupport } from './useMediaSupportStore';
-import { Language } from './useLanguagesStore';
+import { Language } from './useLanguageStore';
 
 interface AdminStore {
   mediaSupports: MediaSupport[];

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAdminStore } from '../../stores/useAdminStore';
 import { Plus, Edit2, Trash2, Save, X } from 'lucide-react';
-import { Tags } from '../../stores/useTagsStore';
+import { Tags } from '../../stores/useTagStore';
 
 const TagsPage = () => {
   const { tags, loading, error, addItem, updateItem, deleteItem } = useAdminStore();

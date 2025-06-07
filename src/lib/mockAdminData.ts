@@ -2,7 +2,7 @@ import { subDays } from 'date-fns';
 import { Entity } from '../stores/useEntitiesStore';
 import { MediaVersion } from '../stores/useMediaVersionStore';
 import { MediaSupport, MediaType } from '../stores/useMediaSupportStore';
-import { Language, LanguageType } from '../stores/useLanguagesStore';
+import { Language, LanguageType } from '../stores/useLanguageStore';
 import { Sermon } from '../stores/useSermonsStore';
 
 export const DEFAULT_PREACHERS = [

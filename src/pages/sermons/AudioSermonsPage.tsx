@@ -4,8 +4,8 @@ import { Search, Filter, Globe, MapPin, ChevronLeft, ChevronRight } from 'lucide
 import { format } from 'date-fns';
 import { fr, ta, enUS, es } from 'date-fns/locale';
 import { Sermon, useSermonsStore } from '../../stores/useSermonsStore';
-import { useTagsStore } from '../../stores/useTagsStore';
-import { useLanguageStore } from '../../stores/useLanguageStore';
+import { useTagsStore } from '../../stores/useTagStore';
+import { useLanguageStore } from '../../stores/useFrontEndLanguageStore';
 import { useTranslation } from '../../hooks/useTranslation';
 import AudioPlayer from '../../components/audio/AudioPlayer';
 import PageHeader from '../../components/ui/PageHeader';

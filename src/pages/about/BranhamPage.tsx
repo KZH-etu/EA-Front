@@ -1,7 +1,7 @@
 import React from 'react';
 import PageHeader from '../../components/ui/PageHeader';
 import Section from '../../components/ui/Section';
-import { useLanguageStore } from '../../stores/useLanguageStore';
+import { useLanguageStore } from '../../stores/useFrontEndLanguageStore';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useAboutStore } from '../../stores/useAboutStore';
 

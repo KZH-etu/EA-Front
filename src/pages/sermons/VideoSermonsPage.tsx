@@ -4,8 +4,8 @@ import { Search, Filter, Globe, MapPin, ChevronLeft, ChevronRight } from 'lucide
 import PageHeader from '../../components/ui/PageHeader';
 import SermonCard from '../../components/sermons/SermonCard';
 import { useSermonsStore } from '../../stores/useSermonsStore';
-import { useTagsStore } from '../../stores/useTagsStore';
-import { useLanguageStore } from '../../stores/useLanguageStore';
+import { useTagsStore } from '../../stores/useTagStore';
+import { useLanguageStore } from '../../stores/useFrontEndLanguageStore';
 import { useTranslation } from '../../hooks/useTranslation';
 import TagSelector from '../../components/ui/TagSelector';
 import LanguageSelector from '../../components/ui/LanguageSelector';

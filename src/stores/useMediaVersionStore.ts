@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useEntitiesData, useMediaVersionsData, useSermonsData } from '../hooks/useData';
 import { useDataStore } from '../services/dataService';
-import { Language } from './useLanguagesStore';
+import { Language } from './useLanguageStore';
 
 export interface MediaVersion {
   id: string;

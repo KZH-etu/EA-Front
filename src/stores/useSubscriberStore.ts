@@ -1,22 +1,22 @@
 import { create } from "zustand";
-import { CreateLanguageDto, UpdateLanguageDto } from "../api/types/languages/create-language.dto";
-import { Language } from "../api/types/languages/languages";
-import * as API from "../api/languages"
+import { CreateSubscriberDto, UpdateSubscriberDto } from "../api/types/subscribers/create-subscribers.dto";
+import { Subscriber } from "../api/types/subscribers/subscribers";
+import * as API from "../api/subscribers"
 
-interface LanguageState {
-  items: Language[];
-  current?: Language;
+interface SubscriberState {
+  items: Subscriber[];
+  current?: Subscriber;
   loading: boolean;
   error?: string;
 
   fetchAll: () => Promise<void>;
   fetchOne: (id: string) => Promise<void>;
-  create: (dto: CreateLanguageDto) => Promise<void>;
-  update: (id: string, dto: UpdateLanguageDto) => Promise<void>;
+  create: (dto: CreateSubscriberDto) => Promise<void>;
+  update: (id: string, dto: UpdateSubscriberDto) => Promise<void>;
   remove: (id: string) => Promise<void>;
 }
 
-export const useLanguageStore = create<LanguageState>((set) => ({
+export const useSubscriberStore = create<SubscriberState>((set) => ({
   items: [],
   current: undefined,
   loading: false,
@@ -25,7 +25,7 @@ export const useLanguageStore = create<LanguageState>((set) => ({
   fetchAll: async () => {
     set({ loading: true, error: undefined });
     try {
-      const res = await API.fetchLanguages();
+      const res = await API.fetchSubscribers();
       set({ items: res.data });
     } catch (e: any) {
       set({ error: e.message });
@@ -37,7 +37,7 @@ export const useLanguageStore = create<LanguageState>((set) => ({
   fetchOne: async (id) => {
     set({ loading: true, error: undefined });
     try {
-      const res = await API.fetchLanguage(id);
+      const res = await API.fetchSubscriber(id);
       set({ current: res.data });
     } catch (e: any) {
       set({ error: e.message });
@@ -49,7 +49,7 @@ export const useLanguageStore = create<LanguageState>((set) => ({
   create: async (dto) => {
     set({ loading: true, error: undefined });
     try {
-      const res = await API.createLanguage(dto);
+      const res = await API.createSubscriber(dto);
       set((state) => ({ items: [res.data, ...state.items] }));
     } catch (e: any) {
       set({ error: e.message });
@@ -61,8 +61,8 @@ export const useLanguageStore = create<LanguageState>((set) => ({
   update: async (id, dto) => {
     set({ loading: true, error: undefined });
     try {
-      const res = await API.updateLanguage(id, dto);
-      set((state) => ({ items: state.items.map(l => l.id === id ? res.data : l), current: state.current?.id === id ? res.data : state.current }));
+      const res = await API.updateSubscriber(id, dto);
+      set((state) => ({ items: state.items.map(s => s.id === id ? res.data : s), current: state.current?.id === id ? res.data : state.current }));
     } catch (e: any) {
       set({ error: e.message });
     } finally {
@@ -73,8 +73,8 @@ export const useLanguageStore = create<LanguageState>((set) => ({
   remove: async (id) => {
     set({ loading: true, error: undefined });
     try {
-      await API.deleteLanguage(id);
-      set((state) => ({ items: state.items.filter(l => l.id !== id), current: state.current?.id === id ? undefined : state.current }));
+      await API.deleteSubscriber(id);
+      set((state) => ({ items: state.items.filter(s => s.id !== id), current: state.current?.id === id ? undefined : state.current }));
     } catch (e: any) {
       set({ error: e.message });
     } finally {

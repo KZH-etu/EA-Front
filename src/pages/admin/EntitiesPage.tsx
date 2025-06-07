@@ -12,7 +12,7 @@ import {
 import { motion } from 'framer-motion';
 import { EntityForm } from '../../components/admin/EntityForm';
 import { Entity, useEntitiesStore } from '../../stores/useEntitiesStore';
-import { useTagsStore } from '../../stores/useTagsStore';
+import { useTagsStore } from '../../stores/useTagStore';
 
 const EntitiesPage = () => {
   const { entities, loading, error, fetchEntities, addEntity, updateEntity, deleteEntity } = useEntitiesStore();

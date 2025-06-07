@@ -1,22 +1,22 @@
 import { create } from "zustand";
-import { CreateLanguageDto, UpdateLanguageDto } from "../api/types/languages/create-language.dto";
-import { Language } from "../api/types/languages/languages";
-import * as API from "../api/languages"
+import { CreateDocumentMediaDto, UpdateDocumentMediaDto } from "../api/types/document-media/create-document-media.dto";
+import { DocumentMedia } from "../api/types/document-media/document-media";
+import * as API from "../api/media"
 
-interface LanguageState {
-  items: Language[];
-  current?: Language;
+interface MediaState {
+  items: DocumentMedia[];
+  current?: DocumentMedia;
   loading: boolean;
   error?: string;
 
   fetchAll: () => Promise<void>;
   fetchOne: (id: string) => Promise<void>;
-  create: (dto: CreateLanguageDto) => Promise<void>;
-  update: (id: string, dto: UpdateLanguageDto) => Promise<void>;
+  create: (dto: CreateDocumentMediaDto) => Promise<void>;
+  update: (id: string, dto: UpdateDocumentMediaDto) => Promise<void>;
   remove: (id: string) => Promise<void>;
 }
 
-export const useLanguageStore = create<LanguageState>((set) => ({
+export const useMediaStore = create<MediaState>((set) => ({
   items: [],
   current: undefined,
   loading: false,
@@ -25,7 +25,7 @@ export const useLanguageStore = create<LanguageState>((set) => ({
   fetchAll: async () => {
     set({ loading: true, error: undefined });
     try {
-      const res = await API.fetchLanguages();
+      const res = await API.fetchMedia();
       set({ items: res.data });
     } catch (e: any) {
       set({ error: e.message });
@@ -37,7 +37,7 @@ export const useLanguageStore = create<LanguageState>((set) => ({
   fetchOne: async (id) => {
     set({ loading: true, error: undefined });
     try {
-      const res = await API.fetchLanguage(id);
+      const res = await API.fetchMediaItem(id);
       set({ current: res.data });
     } catch (e: any) {
       set({ error: e.message });
@@ -49,7 +49,7 @@ export const useLanguageStore = create<LanguageState>((set) => ({
   create: async (dto) => {
     set({ loading: true, error: undefined });
     try {
-      const res = await API.createLanguage(dto);
+      const res = await API.createMedia(dto);
       set((state) => ({ items: [res.data, ...state.items] }));
     } catch (e: any) {
       set({ error: e.message });
@@ -61,8 +61,11 @@ export const useLanguageStore = create<LanguageState>((set) => ({
   update: async (id, dto) => {
     set({ loading: true, error: undefined });
     try {
-      const res = await API.updateLanguage(id, dto);
-      set((state) => ({ items: state.items.map(l => l.id === id ? res.data : l), current: state.current?.id === id ? res.data : state.current }));
+      const res = await API.updateMedia(id, dto);
+      set((state) => ({
+        items: state.items.map((m) => (m.id === id ? res.data : m)),
+        current: state.current?.id === id ? res.data : state.current,
+      }));
     } catch (e: any) {
       set({ error: e.message });
     } finally {
@@ -73,8 +76,11 @@ export const useLanguageStore = create<LanguageState>((set) => ({
   remove: async (id) => {
     set({ loading: true, error: undefined });
     try {
-      await API.deleteLanguage(id);
-      set((state) => ({ items: state.items.filter(l => l.id !== id), current: state.current?.id === id ? undefined : state.current }));
+      await API.deleteMedia(id);
+      set((state) => ({
+        items: state.items.filter((m) => m.id !== id),
+        current: state.current?.id === id ? undefined : state.current,
+      }));
     } catch (e: any) {
       set({ error: e.message });
     } finally {

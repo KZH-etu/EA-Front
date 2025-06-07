@@ -3,7 +3,7 @@ import PageHeader from '../components/ui/PageHeader';
 import EventCard from '../components/events/EventCard';
 import { motion } from 'framer-motion';
 import { useEventsStore } from '../stores/useEventsStore';
-import { useLanguageStore } from '../stores/useLanguageStore';
+import { useLanguageStore } from '../stores/useFrontEndLanguageStore';
 import { useTranslation } from '../hooks/useTranslation';
 
 const EventsPage = () => {

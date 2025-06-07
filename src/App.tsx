@@ -1,5 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
+import { useEffect } from 'react';
 
 // Layouts
 import MainLayout from './layouts/MainLayout';
@@ -33,7 +34,19 @@ import AdminStreams from './pages/admin/StreamsPage';
 import AdminNewsletter from './pages/admin/NewsletterPage';
 import LoginPage from './pages/LoginPage';
 
+// Stores
+import { useDocumentStore } from './stores/useDocumentStore';
+import { useLanguageStore } from './stores/useLanguageStore';
+
 function App() {
+  const fetchAllDocs = useDocumentStore((s) => s.fetchAll);
+  const fetchLangs   = useLanguageStore((s) => s.fetchAll);
+
+  useEffect(() => {
+    fetchLangs();
+    fetchAllDocs();
+    // fetch all Global data
+  }, [fetchLangs, fetchAllDocs]);
   return (
     <AnimatePresence mode="wait">
       <Routes>

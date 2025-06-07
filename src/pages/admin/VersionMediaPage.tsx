@@ -13,7 +13,7 @@ import {
 import { motion } from 'framer-motion';
 import { DocumentVersionForm } from '../../components/admin/MediaVersionForm';
 import { useEntitiesStore } from '../../stores/useEntitiesStore';
-import { useLanguagesStore } from '../../stores/useLanguagesStore';
+import { useLanguagesStore } from '../../stores/useLanguageStore';
 
 const VersionMediaPage = () => {
   const { entities, loading: entitiesLoading, error: entitiesError, fetchEntities } = useEntitiesStore();

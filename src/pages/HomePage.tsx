@@ -6,7 +6,7 @@ import SermonCard from '../components/sermons/SermonCard';
 import EventCard from '../components/events/EventCard';
 import { useSermonsStore } from '../stores/useSermonsStore';
 import { useEventsStore } from '../stores/useEventsStore';
-import { useLanguageStore } from '../stores/useLanguageStore';
+import { useLanguageStore } from '../stores/useFrontEndLanguageStore';
 import { useTranslation } from '../hooks/useTranslation';
 
 const videos = [

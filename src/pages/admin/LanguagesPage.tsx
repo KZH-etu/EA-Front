@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLanguagesStore, LanguageType, Language } from '../../stores/useLanguagesStore';
+import { useLanguagesStore, LanguageType, Language } from '../../stores/useLanguageStore';
 import { Plus, Edit2, Trash2, Save, X } from 'lucide-react';
 
 const LANG_TYPE_OPTIONS = [

@@ -7,7 +7,7 @@ import { fr } from 'date-fns/locale';
 import PageHeader from '../components/ui/PageHeader';
 import ScrollableSermonList from '../components/sermons/ScrollableSermonList';
 import { useSermonsStore } from '../stores/useSermonsStore';
-import { useLanguageStore } from '../stores/useLanguageStore';
+import { useLanguageStore } from '../stores/useFrontEndLanguageStore';
 import { useTranslation } from '../hooks/useTranslation';
 import ReactPlayer from 'react-player';
 import LanguageSelector from '../components/ui/LanguageSelector';
