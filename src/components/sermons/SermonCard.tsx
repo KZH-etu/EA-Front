@@ -10,7 +10,6 @@ interface SermonProps {
   title: string;
   preacher: string;
   date: string;
-  views: number;
   type: string; // 'audio' or 'video'
   mediaUrl?: string;
 }
@@ -38,7 +37,6 @@ const SermonCard = ({ sermon }: SermonCardProps, currentLanguage: String) => {
   const navigate = useNavigate();
   const [isPlaying, setIsPlaying] = useState(false);
   const [showPlayer, setShowPlayer] = useState(false);
-  const { incrementViews } = useSermonsStore();
   const { t } = useTranslation();
 
   const chooseLocale = () => {
@@ -55,7 +53,6 @@ const SermonCard = ({ sermon }: SermonCardProps, currentLanguage: String) => {
   const handlePlay = (e: React.MouseEvent) => {
     e.stopPropagation();
     navigate(`/sermons/${sermon.id}`);
-    incrementViews(sermon.id);
   };
 
   const handleCardClick = () => {
@@ -119,10 +116,6 @@ const SermonCard = ({ sermon }: SermonCardProps, currentLanguage: String) => {
           <div className="flex items-center">
             <Calendar size={16} className="mr-1" />
             <span>{formattedDate}</span>
-          </div>
-          <div className="flex items-center">
-            <Clock size={16} className="mr-1" />
-            <span>{sermon.views} {t('sermons.views')}</span>
           </div>
         </div>
       </div>

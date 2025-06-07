@@ -1,5 +1,3 @@
-import { useState, useCallback } from 'react';
-import { useSermonsData } from '../hooks/useData';
 import { ContentTranslations } from '../lib/interfacesData';
 import { useDataStore } from '../services/dataService';
 

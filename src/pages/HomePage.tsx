@@ -37,16 +37,11 @@ const videos = [
 ];
 
 const HomePage = () => {
-  const { sermons, loading: sermonsLoading, fetchSermons } = useSermonsStore();
-  const { events, loading: eventsLoading, fetchEvents } = useEventsStore();
+  const { sermons, loading: sermonsLoading} = useSermonsStore();
+  const { events, loading: eventsLoading} = useEventsStore();
   const [currentVideo, setCurrentVideo] = useState(0);
   const { currentLanguage } = useLanguageStore();
   const { t } = useTranslation();
-
-  useEffect(() => {
-    fetchSermons();
-    fetchEvents();
-  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {

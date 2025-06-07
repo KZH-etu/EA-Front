@@ -13,7 +13,7 @@ import { createDocumentMedia, deleteDocumentMedia, fetchDocumentMedias, updateDo
 import { mapBooks, mapSermons } from '../components/utils/formatters';
 import { createTag, deleteTag, fetchTags, updateTag } from './tagService';
 import { Language } from '../stores/useLanguagesStore';
-import { createLanguage, deleteLanguage, fetchLanguages, updateLanguage } from './languageservice';
+import { createLanguage, deleteLanguage, fetchLanguages, updateLanguage } from './languageService';
 
 // Central store for all data
 interface DataState {
@@ -88,7 +88,6 @@ export const useDataStore = create<DataStore>((set, get) => ({
   fetchData: async () => {
     set({ loading: true, error: null });
     try {
-      console.log('Fetching data...');
       const [entities , mediaVersions, mediaSupports, tags, languages] = await Promise.all([
         fetchDocuments(),
         fetchDocumentVersions(),

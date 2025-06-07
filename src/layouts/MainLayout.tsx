@@ -4,10 +4,21 @@ import { motion } from 'framer-motion';
 import Navbar from '../components/navigation/Navbar';
 import Footer from '../components/navigation/Footer';
 import ScrollToTop from '../components/ui/ScrollToTop';
+import { useAdminStore } from '../stores/useAdminStore';
 
 const MainLayout = () => {
   const location = useLocation();
   const [showScrollButton, setShowScrollButton] = useState(false);
+
+  const { entities, books, sermons, fetchData, hasFetched } = useAdminStore();
+  
+    useEffect(() => {
+      if (!hasFetched) {
+        console.log('Fetching initial data...');
+        fetchData();
+        console.log('Data fetched:', { books, sermons, entities });
+      }
+    }, [fetchData, hasFetched]);
 
   // Control scroll-to-top button visibility
   useEffect(() => {
