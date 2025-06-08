@@ -2,7 +2,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { useState, useEffect } from 'react';
 import TagSelector from '../ui/TagSelector';
-import { Tags } from '../../stores/useTagsStore';
+import { Tags } from '../../stores/useTagStore';
 import { Entity } from '../../stores/useEntitiesStore';
 
 type EventType = 'CONFERENCE' | 'SEMINAR' | 'MEETING'; // adapte selon ton projet

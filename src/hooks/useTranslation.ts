@@ -1,4 +1,4 @@
-import { useLanguageStore } from '../stores/useLanguageStore';
+import { useLanguageStore } from '../stores/useFrontEndLanguageStore';
 
 interface NavTranslation {
   home: string,

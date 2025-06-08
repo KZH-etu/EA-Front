@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLanguageStore } from '../stores/useLanguageStore';
+import { useLanguageStore } from '../stores/useFrontEndLanguageStore';
 import { translationService } from '../services/translationService';
 
 export const useAutoTranslation = (content: string | string[], sourceLang: string = 'fr') => {

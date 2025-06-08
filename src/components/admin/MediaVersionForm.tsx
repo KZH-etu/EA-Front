@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
 import { MediaVersion } from '../../stores/useMediaVersionStore';
-import { Language } from '../../stores/useLanguagesStore';
+import { Language } from '../../stores/useLanguageStore';
 
 interface Entity {
   id: string;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Globe } from 'lucide-react';
-import { useLanguageStore, SUPPORTED_LANGUAGES } from '../../stores/useLanguageStore';
+import { useLanguageStore, SUPPORTED_LANGUAGES } from '../../stores/useFrontEndLanguageStore';
 
 const LanguageToggle = () => {
   const [isOpen, setIsOpen] = useState(false);

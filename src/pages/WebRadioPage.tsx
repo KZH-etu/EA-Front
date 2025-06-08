@@ -3,7 +3,7 @@ import { Play, Pause, Volume2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PageHeader from '../components/ui/PageHeader';
 import ReactPlayer from 'react-player';
-import { useLanguageStore } from '../stores/useLanguageStore';
+import { useLanguageStore } from '../stores/useFrontEndLanguageStore';
 import { useTranslation } from '../hooks/useTranslation';
 
 const WebRadioPage = () => {

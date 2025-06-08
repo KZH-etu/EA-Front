@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Tag, X, ChevronDown } from 'lucide-react';
-import { Tags } from '../../stores/useTagsStore';
+import { Tags } from '../../stores/useTagStore';
 
 interface TagSelectorProps {
   availableTags: Tags[];
