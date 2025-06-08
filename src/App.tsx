@@ -32,6 +32,7 @@ import AdminLanguage from './pages/admin/LanguagesPage';
 import AdminStreams from './pages/admin/StreamsPage';
 import AdminNewsletter from './pages/admin/NewsletterPage';
 import LoginPage from './pages/LoginPage';
+import AudioSermonView from './pages/sermons/AudioSermonViewPage';
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
           <Route path="about/frank" element={<AboutFrankPage />} />
           <Route path="about/branham" element={<AboutBranhamPage />} />
           <Route path="sermons/audio" element={<AudioSermonsPage />} />
+          <Route path="sermons/audio/:id" element={<AudioSermonView />} />
           <Route path="sermons/video" element={<VideoSermonsPage />} />
           <Route path="sermons/:id" element={<SermonViewPage />} />
           <Route path="books" element={<BooksPage />} />

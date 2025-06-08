@@ -11,6 +11,7 @@ import AudioPlayer from '../../components/audio/AudioPlayer';
 import PageHeader from '../../components/ui/PageHeader';
 import TagSelector from '../../components/ui/TagSelector';
 import LanguageSelector from '../../components/ui/LanguageSelector';
+import { Link } from 'react-router-dom';
 
 const SERMONS_PER_PAGE = 6;
 const LANGUAGES = [
@@ -72,8 +73,8 @@ const AudioSermonsPage = () => {
     if (!selectedSermon || !actionType) return;
 
     const url = actionType === 'play' 
-      ? selectedSermon.translations.find(value => value.lang === langCode)?.audioUrl
-      : selectedSermon.translations.find(value => value.lang === langCode)?.downloadUrl;
+      ? selectedSermon.translations.find(value => value.lang === langCode)?.url
+      : selectedSermon.translations.find(value => value.lang === langCode)?.url;
 
     if (url) {
       if (actionType === 'download') {
@@ -297,7 +298,7 @@ const AudioSermonsPage = () => {
           {filteredSermons.length} {t('sermons.foundResults')}
         </div>
 
-        {loading ? (
+        {/*loading ? (
           <div className="flex justify-center py-12">
             <div className="w-16 h-16 border-t-4 border-primary-500 border-solid rounded-full animate-spin"></div>
           </div>
@@ -305,7 +306,7 @@ const AudioSermonsPage = () => {
           <div className="text-center text-error bg-error/10 p-4 rounded-lg">
             {error}
           </div>
-        ) : paginatedSermons.length === 0 ? (
+        ) : */paginatedSermons.length === 0 ? (
           <div className="text-center py-12 text-neutral-600">
             {t('sermons.noResults')}
           </div>
@@ -319,18 +320,25 @@ const AudioSermonsPage = () => {
                   animate={{ opacity: 1, y: 0 }}
                   className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-200"
                 >
-                  <div className="relative h-48 bg-neutral-900">
-                    <img 
-                      src="https://images.pexels.com/photos/1774986/pexels-photo-1774986.jpeg"
-                      alt="Audio waveform"
-                      className="w-full h-full object-cover opacity-50"
-                    />
-                  </div>
+                  <Link to={`/sermons/audio/${sermon.id}`} className="block">
+                    <div className="relative h-48 bg-neutral-900">
+                      <img 
+                        src="https://images.pexels.com/photos/1774986/pexels-photo-1774986.jpeg"
+                        alt="Audio waveform"
+                        className="w-full h-full object-cover opacity-50"
+                      />
+                    </div>
+                  </Link>
 
                   <div className="p-6">
-                    <h3 className="text-xl font-bold mb-2 text-neutral-900">
-                      {sermon.title}
-                    </h3>
+                    <Link 
+                      to={`/sermons/audio/${sermon.id}`}
+                      className="block hover:text-primary-600 transition-colors"
+                    >
+                      <h3 className="text-xl font-bold mb-2 text-neutral-900">
+                        {sermon.title}
+                      </h3>
+                    </Link>
                     <div className="flex items-center gap-4 text-sm text-neutral-500 mb-4">
                       <span className="font-medium text-primary-600">
                         {sermon.preacher}

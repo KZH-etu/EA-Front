@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import {  mockAdminEvents, mockAdminTags, mockAdminSubscribers, mockAdminStats, mockAdminAboutSections, mockAdminAboutDetails, mockAdminLanguages } from '../lib/mockAdminData';
+import {  mockAdminEvents, mockAdminTags, mockAdminSubscribers, mockAdminStats, mockAdminAboutSections, mockAdminAboutDetails, mockAdminLanguages, mockAdminSermons } from '../lib/mockAdminData';
 import { MediaSupport } from '../stores/useMediaSupportStore';
 import { MediaVersion } from '../stores/useMediaVersionStore';
 import { Entity } from '../stores/useEntitiesStore';
@@ -65,7 +65,7 @@ const initialState: DataState = {
   mediaSupports: [],
   mediaVersions: [],
   entities: [],
-  sermons: [],
+  sermons: mockAdminSermons,
   books: [],
   events: [],
   tags: [],
@@ -105,7 +105,8 @@ export const useDataStore = create<DataStore>((set, get) => ({
         subscribers: mockAdminSubscribers,
         stats: mockAdminStats,
         books: mapBooks({entities, versions: mediaVersions, medias: mediaSupports}),
-        sermons: mapSermons({entities, versions: mediaVersions, medias: mediaSupports}),
+        sermons: //mapSermons({entities, versions: mediaVersions, medias: mediaSupports}),
+        mockAdminSermons,
         loading: false,
         hasFetched: true,
       });
