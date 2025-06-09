@@ -1,7 +1,68 @@
+import { subDays } from 'date-fns';
+import { Document, DocumentCategory } from '../api/types/documents/documents';
 
 export const DEFAULT_PREACHERS = [
   'William Marrion Branham',
   'Ewald Frank'
+];
+
+export const mockAdminSermons = [
+  {
+    id: '1',
+    preacher: 'Ewald Frank',
+    date: subDays(new Date(), 2).toISOString(),
+    type: 'audio',
+    duration: '45:30',
+    tags: ['1', '5'],
+    availableLanguages: ['fr', 'en', 'es'],
+    language: 'fr', // langue source (celle saisie manuellement)
+    location: 'Centre Biblique',
+    translations: [
+      {
+        lang: 'fr',
+        title: 'La Foi Vivante',
+        description: 'Un message puissant sur la foi qui transforme les vies...',
+        url: 'https://example.com/sermons/fr/la-foi-vivante.mp3',
+      },
+      {
+        lang: 'en',
+        title: 'Living Faith',
+        description: 'A powerful message about faith that transforms lives...',
+        url: 'https://example.com/sermons/en/living-faith.mp3',
+      },
+      {
+        lang: 'es',
+        title: 'Fe Viva',
+        description: 'Un mensaje poderoso sobre la fe que transforma vidas...',
+        url: 'https://example.com/sermons/es/fe-viva.mp3',
+      }
+    ]
+  },
+  {
+  id: '2',
+  preacher: 'Ewald Frank',
+  date: subDays(new Date(), 5).toISOString(),
+  type: 'audio',
+  duration: '38:15',
+  tags: ['2', '4'],
+  availableLanguages: ['fr', 'en'],
+  language: 'fr',
+  location: 'Centre Biblique',
+  translations: [
+    {
+      lang: 'fr',
+      title: 'La Puissance de la Prière',
+      description: 'Découvrez comment la prière peut transformer votre vie spirituelle...',
+      url: 'https://example.com/sermons/fr/puissance-priere.mp3',
+    },
+    {
+      lang: 'en',
+      title: 'The Power of Prayer',
+      description: 'Discover how prayer can transform your spiritual life...',
+      url: 'https://example.com/sermons/en/power-prayer.mp3',
+    }
+  ]
+}
 ];
 
 // export const mockAdminBooks = [
