@@ -19,17 +19,14 @@ const TagsPage = () => {
   useEffect(() => {
     if(!hasFetched) fetchTags();
   }, [hasFetched, fetchTags]);
-
-  const [newTagName, setNewTagName] = useState('');
+  
   const [editingTag, setEditingTag] = useState<Tag | null>(null);
-  const [editedName, setEditedName] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [newTagTranslations, setNewTagTranslations] = useState<CreateTagTranslationDto[]>([
     { language: LanguageEnum.fr, title: '' },
     { language: LanguageEnum.en, title: '' },
     { language: LanguageEnum.es, title: '' },
   ]);
-    const [selectedLang, setSelectedLang] = useState('fr');
     const [editTagTranslations, setEditTagTranslations] = useState<CreateTagTranslationDto[]>([
     { language: LanguageEnum.fr, title: '' },
     { language: LanguageEnum.en, title: '' },

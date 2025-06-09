@@ -14,14 +14,7 @@ import { DocumentMedia, MediaType } from '../../api/types/document-media/documen
 import { useMediaStore } from '../../stores/useMediaStore';
 import { useVersionStore } from '../../stores/useVersionsStore';
 import { useDocumentStore } from '../../stores/useDocumentStore';
-
-const LANGUAGES = [
-  { code: 'fr', name: 'Français' },
-  { code: 'en', name: 'English' },
-  { code: 'es', name: 'Español' },
-  { code: 'de', name: 'Deutsch' },
-  { code: 'pt', name: 'Português' }
-];
+import { useLanguageStore } from '../../stores/useLanguageStore';
 
 const MEDIA_TYPE_LABELS = {
   [MediaType.TEXT]: 'Texte',
@@ -30,6 +23,13 @@ const MEDIA_TYPE_LABELS = {
 };
 
 const MediaSupportPage = () => {
+  const {
+    items: language,
+    loading: languageLoading,
+    error: languageError,
+    hasFetched: hasFetchedLanguages,
+    fetchAll: fetchLanguages
+  } = useLanguageStore();
   const { 
     items: entities, 
     loading: entitiesLoading, 
@@ -58,21 +58,19 @@ const MediaSupportPage = () => {
 
   // Chargement initial des données
   useEffect(() => {
-    console.log('Loading state:', { 
-      hasFetchedEntities,
-      hasFetchedVersions,
-      hasFetchedSupports
-    });
     if (!hasFetchedEntities) fetchEntities();
     if (!hasFetchedVersions) fetchMediaVersions();
     if (!hasFetchedSupports) fetchMediaSupports();
+    if (!hasFetchedLanguages) fetchLanguages();
   }, [
     hasFetchedEntities,
     hasFetchedVersions,
     hasFetchedSupports,
+    hasFetchedLanguages,
     fetchEntities,
     fetchMediaVersions,
-    fetchMediaSupports
+    fetchMediaSupports,
+    fetchLanguages,
   ]);
 
   const [showForm, setShowForm] = useState(false);
@@ -117,25 +115,25 @@ const MediaSupportPage = () => {
     return mediaSupports.filter(s => s.documentVersionId === versionId);
   }
 
-  const handleFormSubmit = async (supports: DocumentMedia[]) => {
-    setSubmitting(true);
-    try {
-      if (editingSupport) {
-        for (const support of supports) {
-          const { id, createdAt, ...dataWithoutId } = support;
-          await updateMediaSupport(support.id, dataWithoutId);
-        }
-      } else {
-        for (const support of supports) {
-          await addMediaSupport(support);
-        }
-      }
-      setShowForm(false);
-      setEditingSupport(null);
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  // const handleFormSubmit = async (supports: DocumentMedia[]) => {
+  //   setSubmitting(true);
+  //   try {
+  //     if (editingSupport) {
+  //       for (const support of supports) {
+  //         const { id, createdAt, ...dataWithoutId } = support;
+  //         await updateMediaSupport(support.id, dataWithoutId);
+  //       }
+  //     } else {
+  //       for (const support of supports) {
+  //         await addMediaSupport(support);
+  //       }
+  //     }
+  //     setShowForm(false);
+  //     setEditingSupport(null);
+  //   } finally {
+  //     setSubmitting(false);
+  //   }
+  // };
 
   const handleDelete = async (support: DocumentMedia) => {
     if (window.confirm('Voulez-vous vraiment supprimer ce support ?')) {
@@ -223,7 +221,7 @@ const MediaSupportPage = () => {
                     <td className="px-6 py-4">{(entity.categories || []).join(', ')}</td>
                     <td className="px-6 py-4">
                       {languages.length > 0
-                        ? languages.map(code => LANGUAGES.find(l => l.code === code)?.name || code).join(', ')
+                        ? languages.map(code => language.find(l => l.id === code)?.name || code).join(', ')
                         : <span className="text-neutral-400">-</span>
                       }
                     </td>
@@ -261,7 +259,7 @@ const MediaSupportPage = () => {
                                   <tr key={support.id}>
                                     <td className="px-4 py-2">{version.title}</td>
                                     <td className="px-4 py-2">
-                                      {LANGUAGES.find(l => l.code === version.languageId)?.name || version.languageId}
+                                      {language.find(l => l.id === version.languageId)?.name || version.languageId}
                                     </td>
                                     <td className="px-4 py-2">{MEDIA_TYPE_LABELS[support.mediaType]}</td>
                                     <td className="px-4 py-2">{support.title || <span className="text-neutral-400">-</span>}</td>
@@ -336,7 +334,8 @@ const MediaSupportPage = () => {
                 <X size={24} />
               </button>
             </div>
-            <MediaSupportForm
+            {/**Les props du formulaire peuvent être améliorer */}
+            {/* <MediaSupportForm
               entities={entities}
               mediaVersions={mediaVersions}
               initialData={editingSupport}
@@ -345,7 +344,7 @@ const MediaSupportPage = () => {
                 setShowForm(false);
                 setEditingSupport(null);
               }}
-            />
+            /> */}
           </motion.div>
         </div>
       )}

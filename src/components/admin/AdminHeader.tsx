@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, Bell, User, Search, Settings } from 'lucide-react';
-import Logo from '../ui/Logo';
 
 interface AdminHeaderProps {
   toggleSidebar: () => void;

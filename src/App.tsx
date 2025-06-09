@@ -14,7 +14,7 @@ import AboutFrankPage from './pages/about/FrankPage';
 import AboutBranhamPage from './pages/about/BranhamPage';
 import AudioSermonsPage from './pages/sermons/AudioSermonsPage';
 import VideoSermonsPage from './pages/sermons/VideoSermonsPage';
-import SermonViewPage from './pages/SermonViewPage';
+import SermonViewPage from './pages/sermons/SermonVideoViewPage';
 import BooksPage from './pages/BooksPage';
 import BookViewPage from './pages/BookViewPage';
 import EventsPage from './pages/EventsPage';

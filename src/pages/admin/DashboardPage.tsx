@@ -1,11 +1,8 @@
 import { 
-  BarChart, 
   FileText, 
   BookOpen, 
   Calendar, 
   Users, 
-  Radio, 
-  MessageSquare,
   ArrowUp,
   ArrowDown
 } from 'lucide-react';

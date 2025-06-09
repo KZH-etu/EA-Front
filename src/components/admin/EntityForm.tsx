@@ -1,7 +1,7 @@
 import { useForm, Controller } from 'react-hook-form';
 import { useEffect } from 'react';
 import TagSelector from '../ui/TagSelector';
-import { Document, DocumentCategory, EventType } from '../../api/types/documents/documents';
+import { DocumentCategory, EventType } from '../../api/types/documents/documents';
 import { Tag } from '../../api/types/tags/tags';
 import { CreateDocumentDto, UpdateDocumentDto } from '../../api/types/documents/create-document.dto';
 
@@ -47,7 +47,6 @@ export function EntityForm({ tags, initialData, onSubmit, onCancel }: EntityForm
   const selectedCategories = watch('categories') || [];
   const selectedTags = watch('tagIds') || [];
 
-  // Génère un UUID à la création
   useEffect(() => {
     if (initialData) {
       // Nettoie les id dans les sous-objets

@@ -12,7 +12,7 @@
 // import ReactPlayer from 'react-player';
 // import LanguageSelector from '../components/ui/LanguageSelector';
 
-const SermonViewPage = () => {
+const SermonVideoViewPage = () => {
   return (
     <div>
       Hello
@@ -287,4 +287,4 @@ const SermonViewPage = () => {
 //   );
 };
 
-export default SermonViewPage;
+export default SermonVideoViewPage;

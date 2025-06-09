@@ -2,7 +2,6 @@ import { Play, Calendar, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSermonsStore } from '../../stores/useSermonsStore';
 import { useTranslation } from '../../hooks/useTranslation';
 
 interface SermonProps {
@@ -33,7 +32,7 @@ interface SermonCardProps {
   sermon: SermonProps;
 }
 
-const SermonCard = ({ sermon }: SermonCardProps, currentLanguage: String) => {
+const SermonCard = ({ sermon }: SermonCardProps, currentLanguage?: String) => {
   const navigate = useNavigate();
   const [isPlaying, setIsPlaying] = useState(false);
   const [showPlayer, setShowPlayer] = useState(false);

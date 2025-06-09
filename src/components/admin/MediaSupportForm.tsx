@@ -8,7 +8,7 @@ interface MediaSupportFormProps {
   entities: Document[];
   mediaVersions: DocumentVersion[];
   initialData?: DocumentMedia | null;
-  onSubmit: (supports: Omit<DocumentMedia, 'id' | 'createdAt'>[]) => void;
+  onSubmit: (supports: Omit<DocumentMedia, 'id' | 'createdAt' | 'updatedAt'>[]) => void;
   onCancel: () => void;
 }
 
@@ -37,10 +37,6 @@ export function MediaSupportForm({ entities, initialData, mediaVersions, onSubmi
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedEntityId, setSelectedEntityId] = useState<string>('');
   const [selectedMediaVersionId, setSelectedMediaVersionId] = useState<string>('');
-  // Ajout d'un état pour les fichiers (pour l'instant toujours null)
-  const [textFile, setTextFile] = useState<File | null>(null);
-  const [audioFile, setAudioFile] = useState<File | null>(null);
-
 
   // Champs pour chaque MediaType
   const { register, handleSubmit, setValue, reset, watch, formState: { errors } } = useForm<FormFields>({
@@ -114,14 +110,13 @@ export function MediaSupportForm({ entities, initialData, mediaVersions, onSubmi
   return (
     <form
       onSubmit={handleSubmit((data) => {
-        const supports: Omit<DocumentMedia, 'id' | 'createdAt'>[] = [];
+        const supports: Omit<DocumentMedia, 'id' | 'createdAt'| 'updatedAt'>[] = [];
         if (isTextValid) {
           supports.push({
             documentVersionId: selectedMediaVersionId,
             mediaType: MediaType.TEXT,
             url: data.textUrl || '',
-            title: data.textTitle || '',
-            updatedAt: new Date(),
+            title: data.textTitle || ''
           });
         }
         if (isAudioValid) {
@@ -129,8 +124,7 @@ export function MediaSupportForm({ entities, initialData, mediaVersions, onSubmi
             documentVersionId: selectedMediaVersionId,
             mediaType: MediaType.AUDIO,
             url: data.audioUrl || '',
-            title: data.audioTitle || '',
-            updatedAt: new Date(),
+            title: data.audioTitle || ''
           });
         }
         // Ajoute toujours la vidéo si valide
@@ -139,8 +133,7 @@ export function MediaSupportForm({ entities, initialData, mediaVersions, onSubmi
             documentVersionId: selectedMediaVersionId,
             mediaType: MediaType.VIDEO,
             url: data.videoUrl,
-            title: data.videoTitle || '',
-            updatedAt: new Date(),
+            title: data.videoTitle || ''
           });
         }
         onSubmit(supports);

@@ -6,7 +6,7 @@ const StreamsPage = () => {
   const [webtvStatus, setWebtvStatus] = useState('offline');
   const [isLoading, setIsLoading] = useState(false);
 
-  const toggleStream = (type) => {
+  const toggleStream = (type: string) => {
     setIsLoading(true);
     setTimeout(() => {
       if (type === 'radio') {

@@ -2,18 +2,13 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { 
   Plus, 
-  Search, 
-  Edit2, 
-  Trash2, 
+  Search,
   Calendar,
   MapPin,
-  FileText,
   Clock,
   X
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
 import EventTranslationsForm from '../../components/admin/EventTranslationsForm';
 
 const EventsPage = () => {

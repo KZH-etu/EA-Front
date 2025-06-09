@@ -9,7 +9,6 @@ import {
   MessageSquare, 
   LogOut, 
   Tag,
-  Info,
   Activity,
   Languages
 } from 'lucide-react';

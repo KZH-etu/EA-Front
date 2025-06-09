@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Plus, Edit2, Trash2, Save, X } from 'lucide-react';
 import { Language, LanguageType } from '../../api/types/languages/languages';
 import { useLanguageStore } from '../../stores/useLanguageStore';
-import { sub } from 'date-fns';
 
 const LANG_TYPE_OPTIONS = [
   { value: LanguageType.INTERNATIONAL, label: 'International' },
@@ -58,7 +57,7 @@ const LanguagesPage = () => {
   // Edition d'une langue
   const handleEdit = (lang: Language) => {
     setEditLang({ ...lang, countryOfOrigin: lang.countryOfOrigin ?? '' });
-    setEditingId(lang.id); // Ajoute cette ligne
+    setEditingId(lang.id);
   };
 
   const handleUpdate = async (e: React.FormEvent) => {
