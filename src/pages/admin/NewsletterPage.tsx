@@ -1,17 +1,24 @@
 import { useState } from 'react';
-import { useAdminStore } from '../../stores/useAdminStore';
 import { Mail, Send, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { useSubscriberStore } from '../../stores/useSubscriberStore';
 
 const NewsletterPage = () => {
-  const { subscribers, loading, error, addItem, deleteItem } = useAdminStore();
+  const { 
+    items: subscribers, 
+    loading, 
+    error, 
+    fetchAll: fetchSubscribers,
+    create: addSuscriber, 
+    remove: deleteSuscriber
+  } = useSubscriberStore();
   const [newEmail, setNewEmail] = useState('');
   const [emailContent, setEmailContent] = useState('');
   const [emailSubject, setEmailSubject] = useState('');
   const [sending, setSending] = useState(false);
 
-  const handleSendNewsletter = async (e) => {
+  const handleSendNewsletter = async (e : React.FormEvent) => {
     e.preventDefault();
     if (!emailSubject.trim() || !emailContent.trim()) return;
 
@@ -29,14 +36,13 @@ const NewsletterPage = () => {
     }
   };
 
-  const handleAddSubscriber = async (e) => {
+  const handleAddSubscriber = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newEmail.trim()) return;
 
     try {
-      await addItem('subscribers', {
+      await addSuscriber({
         email: newEmail.trim(),
-        createdAt: new Date()
       });
       setNewEmail('');
     } catch (error) {
@@ -44,11 +50,11 @@ const NewsletterPage = () => {
     }
   };
 
-  const handleDeleteSubscriber = async (id) => {
+  const handleDeleteSubscriber = async (id: string) => {
     if (!window.confirm('Are you sure you want to delete this subscriber?')) return;
 
     try {
-      await deleteItem('subscribers', id);
+      await deleteSuscriber(id);
     } catch (error) {
       console.error('Failed to delete subscriber:', error);
     }
@@ -161,7 +167,7 @@ const NewsletterPage = () => {
                     </div>
                   </td>
                   <td className="py-3 px-4">
-                    {format(new Date(subscriber.createdAt), 'dd MMMM yyyy', { locale: fr })}
+                    {format(new Date(subscriber.subscribedAt), 'dd MMMM yyyy', { locale: fr })}
                   </td>
                   <td className="py-3 px-4">
                     <div className="flex justify-end space-x-2">

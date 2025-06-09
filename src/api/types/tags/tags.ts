@@ -2,6 +2,7 @@ export interface Tag {
   id: string;
   createdAt: Date;
   updatedAt: Date;
+  translations: {language: string, title: string}[];
 }
 
 export interface TagTranslation {

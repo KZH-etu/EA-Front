@@ -1,73 +1,53 @@
-import { useState } from 'react';
-import { useAdminStore } from '../../stores/useAdminStore';
+import { useEffect, useState } from 'react';
 import { Plus, Edit2, Trash2, Save, X } from 'lucide-react';
-import { Tags } from '../../stores/useTagStore';
+import { useTagStore } from '../../stores/useTagStore';
+import { Tag } from '../../api/types/tags/tags';
+import { CreateTagTranslationDto, LanguageEnum } from '../../api/types/tags/create-tag.dto';
 
 const TagsPage = () => {
-  const { tags, loading, error, addItem, updateItem, deleteItem } = useAdminStore();
+  const { 
+    items: tags, 
+    loading: loadingTags, 
+    error: errorTags, 
+    hasFetched,
+    fetchAll: fetchTags,
+    create: addTag, 
+    update: updateTag, 
+    remove: deleteTag 
+  } = useTagStore();
+
+  useEffect(() => {
+    if(!hasFetched) fetchTags();
+  }, [hasFetched, fetchTags]);
+
   const [newTagName, setNewTagName] = useState('');
-  const [editingTag, setEditingTag] = useState<Tags | null>(null);
+  const [editingTag, setEditingTag] = useState<Tag | null>(null);
   const [editedName, setEditedName] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [newTagTranslations, setNewTagTranslations] = useState([
-  { lang: 'fr', title: '' },
-  { lang: 'en', title: '' },
-  { lang: 'es', title: '' },
-]);
-  const [selectedLang, setSelectedLang] = useState('fr');
-  const [editTagTranslations, setEditTagTranslations] = useState([
-  { lang: 'fr', title: '' },
-  { lang: 'en', title: '' },
-  { lang: 'es', title: '' },
-]);
-const [editSelectedLang, setEditSelectedLang] = useState('fr');
-
-  const handleAddTag = async (e : React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!newTagName.trim()) return;
-    try {
-      const value = await addItem('tags', {
-        language: 'fr',
-        translations: [
-          { lang: 'fr', title: newTagName.trim() }
-        ],
-      }); 
-      setNewTagName('');
-    } catch (error) {
-      console.error('Failed to add tag:', error);
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const handleUpdateTag = async (id : string) => {
-    if (!editedName.trim() || editedName === editingTag?.translations.find(t => t.lang === 'fr')?.title) {
-      setEditingTag(null);
-      return;
-    }
-
-    setSubmitting(true);
-    try {
-      await updateItem('tags', id, { name: editedName.trim() });
-      setEditingTag(null);
-    } catch (error) {
-      console.error('Failed to update tag:', error);
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  const [newTagTranslations, setNewTagTranslations] = useState<CreateTagTranslationDto[]>([
+    { language: LanguageEnum.fr, title: '' },
+    { language: LanguageEnum.en, title: '' },
+    { language: LanguageEnum.es, title: '' },
+  ]);
+    const [selectedLang, setSelectedLang] = useState('fr');
+    const [editTagTranslations, setEditTagTranslations] = useState<CreateTagTranslationDto[]>([
+    { language: LanguageEnum.fr, title: '' },
+    { language: LanguageEnum.en, title: '' },
+    { language: LanguageEnum.es, title: '' },
+  ]);
+  const [editSelectedLang, setEditSelectedLang] = useState('fr');
 
   const handleDeleteTag = async (id : string) => {
     if (!window.confirm('Are you sure you want to delete this tag?')) return;
 
     try {
-      await deleteItem('tags', id);
+      await deleteTag(id);
     } catch (error) {
       console.error('Failed to delete tag:', error);
     }
   };
 
-  if (loading) {
+  if (loadingTags) {
     return (
       <div className="flex items-center justify-center h-[calc(100vh-64px)]">
         <div className="w-16 h-16 border-t-4 border-primary-500 border-solid rounded-full animate-spin"></div>
@@ -81,9 +61,9 @@ const [editSelectedLang, setEditSelectedLang] = useState('fr');
         <h1 className="text-2xl font-bold">Gestion des Tags</h1>
       </div>
 
-      {error && (
+      {errorTags && (
         <div className="bg-error/10 border-l-4 border-error text-error p-4 mb-6">
-          {error}
+          {errorTags}
         </div>
       )}
 
@@ -94,13 +74,14 @@ const [editSelectedLang, setEditSelectedLang] = useState('fr');
             if (newTagTranslations.every(t => !t.title.trim())) return;
             setSubmitting(true);
             try {
-              await addItem('tags', {
-                translations: newTagTranslations.map(t => ({ lang: t.lang, title: t.title.trim() })),
+              console.log('creer un nouveau tag', newTagTranslations.map(t => ({ language: t.language, title: t.title.trim() })));
+              await addTag({
+                translations: newTagTranslations.map(t => ({ language: t.language, title: t.title.charAt(0).toUpperCase().trim() }))
               });
               setNewTagTranslations([
-                { lang: 'fr', title: '' },
-                { lang: 'en', title: '' },
-                { lang: 'es', title: '' },
+                { language: LanguageEnum.fr, title: '' },
+                { language: LanguageEnum.en, title: '' },
+                { language: LanguageEnum.es, title: '' },
               ]);
             } catch (error) {
               console.error('Failed to add tag:', error);
@@ -108,32 +89,25 @@ const [editSelectedLang, setEditSelectedLang] = useState('fr');
               setSubmitting(false);
             }
           }}
-          className="flex gap-4 mb-8 items-center"
+          className="flex flex-col md:flex-row gap-4 mb-8 items-center"
         >
-          <div className="flex gap-2">
+          <div className="flex flex-col md:flex-row gap-2 w-full">
             {['fr', 'en', 'es'].map((lang) => (
-              <button
-                type="button"
+              <input
                 key={lang}
-                className={`px-2 py-1 rounded ${selectedLang === lang ? 'bg-primary-500 text-white' : 'bg-neutral-200'}`}
-                onClick={() => setSelectedLang(lang)}
-              >
-                {lang.toUpperCase()}
-              </button>
+                type="text"
+                value={newTagTranslations.find(t => t.language === lang)?.title || ''}
+                onChange={e => {
+                  setNewTagTranslations(newTagTranslations.map(t =>
+                    t.language === lang ? { ...t, title: e.target.value } : t
+                  ));
+                }}
+                placeholder={`Tag (${lang.toUpperCase()})`}
+                className="form-input flex-1"
+                disabled={submitting}
+              />
             ))}
           </div>
-          <input
-            type="text"
-            value={newTagTranslations.find(t => t.lang === selectedLang)?.title || ''}
-            onChange={e => {
-              setNewTagTranslations(newTagTranslations.map(t =>
-                t.lang === selectedLang ? { ...t, title: e.target.value } : t
-              ));
-            }}
-            placeholder={`Nouveau tag (${selectedLang.toUpperCase()})`}
-            className="form-input flex-grow"
-            disabled={submitting}
-          />
           <button
             type="submit"
             className="btn-primary flex items-center"
@@ -177,10 +151,10 @@ const [editSelectedLang, setEditSelectedLang] = useState('fr');
                     </div>
                     <input
                       type="text"
-                      value={editTagTranslations.find(t => t.lang === editSelectedLang)?.title || ''}
+                      value={editTagTranslations.find(t => t.language === editSelectedLang)?.title || ''}
                       onChange={e => {
                         setEditTagTranslations(editTagTranslations.map(t =>
-                          t.lang === editSelectedLang ? { ...t, title: e.target.value } : t
+                          t.language === editSelectedLang ? { ...t, title: e.target.value } : t
                         ));
                       }}
                       className="form-input flex-grow"
@@ -190,7 +164,7 @@ const [editSelectedLang, setEditSelectedLang] = useState('fr');
                   </div>
                 </div>
               ) : (
-                <span>{tag.translations.find(t => t.lang == 'fr')?.title}</span>
+                <span>{tag.translations.find(t => t.language == 'fr')?.title}</span>
               )}
 
               <div className="flex items-center space-x-2">
@@ -200,9 +174,10 @@ const [editSelectedLang, setEditSelectedLang] = useState('fr');
                       onClick={async () => {
                         setSubmitting(true);
                         try {
-                          await updateItem('tags', tag.id, {
-                            translations: editTagTranslations.map(t => ({ lang: t.lang, title: t.title.trim() })),
+                          await updateTag(tag.id, {
+                            translations: editTagTranslations.map(t => ({ language: t.language, title: t.title.trim() })),
                           });
+                          fetchTags();
                           setEditingTag(null);
                         } catch (error) {
                           console.error('Failed to update tag:', error);
@@ -228,12 +203,11 @@ const [editSelectedLang, setEditSelectedLang] = useState('fr');
                     <button
                       onClick={() => {
                         setEditingTag(tag);
-                        setEditTagTranslations(
-                          ['fr', 'en', 'es'].map(lang => ({
-                            lang,
-                            title: tag.translations.find(t => t.lang === lang)?.title || '',
-                          }))
-                        );
+                        setEditTagTranslations([
+                          { language: LanguageEnum.fr, title: tag.translations.find(t => t.language === LanguageEnum.fr)?.title || '' },
+                          { language: LanguageEnum.en, title: tag.translations.find(t => t.language === LanguageEnum.en)?.title || '' },
+                          { language: LanguageEnum.es, title: tag.translations.find(t => t.language === LanguageEnum.es)?.title || '' },
+                        ]);
                         setEditSelectedLang('fr');
                       }}
                       className="p-2 text-primary-600 hover:text-primary-800"

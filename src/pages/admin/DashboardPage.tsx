@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-import { useAdminStore } from '../../stores/useAdminStore';
 import { 
   BarChart, 
   FileText, 
@@ -13,11 +11,30 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { useDocumentStore } from '../../stores/useDocumentStore';
+import { mockAdminEvents, mockAdminSermons, mockAdminStats } from '../../lib/mockAdminData';
+import { useEffect } from 'react';
 
 const DashboardPage = () => {
-  const { entities, stats, sermons, events, loading, error} = useAdminStore();
+  const stats = mockAdminStats;
+  const events = mockAdminEvents;
+  const sermons = mockAdminSermons;
+  const { 
+    items: entities, 
+    loading: loadingEntities, 
+    error: errorEntities, 
+    hasFetched: hasFetchedEntities,
+    fetchAll: fecthEntities 
+  } = useDocumentStore();
 
-  if (loading) {
+  useEffect(() => {
+    console.log('Fectching entities...', hasFetchedEntities);
+    if (hasFetchedEntities) {
+      fecthEntities();
+    }
+  }, [hasFetchedEntities, fecthEntities]);
+
+  if (loadingEntities) {
     return (
       <div className="flex items-center justify-center h-[calc(100vh-64px)]">
         <div className="w-16 h-16 border-t-4 border-primary-500 border-solid rounded-full animate-spin"></div>
@@ -25,11 +42,11 @@ const DashboardPage = () => {
     );
   }
 
-  if (error) {
+  if (errorEntities) {
     return (
       <div className="p-6">
         <div className="bg-error/10 border-l-4 border-error text-error p-4 rounded">
-          {error}
+          {errorEntities}
         </div>
       </div>
     );

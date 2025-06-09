@@ -8,6 +8,7 @@ interface LanguageState {
   current?: Language;
   loading: boolean;
   error?: string;
+  hasFetched?: boolean;
 
   fetchAll: () => Promise<void>;
   fetchOne: (id: string) => Promise<void>;
@@ -16,13 +17,17 @@ interface LanguageState {
   remove: (id: string) => Promise<void>;
 }
 
-export const useLanguageStore = create<LanguageState>((set) => ({
+export const useLanguageStore = create<LanguageState>((set, get) => ({
   items: [],
   current: undefined,
   loading: false,
   error: undefined,
+  hasFetched: false,
 
   fetchAll: async () => {
+    const { hasFetched } = get();
+    if (hasFetched) return;
+
     set({ loading: true, error: undefined });
     try {
       const res = await API.fetchLanguages();

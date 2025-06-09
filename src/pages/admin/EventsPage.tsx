@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useAdminStore } from '../../stores/useAdminStore';
 import { 
   Plus, 
   Search, 
@@ -15,11 +14,10 @@ import {
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
-import { Event } from '../../stores/useEventsStore';
 import EventTranslationsForm from '../../components/admin/EventTranslationsForm';
 
 const EventsPage = () => {
-  const { events, loading, error, addItem, updateItem, deleteItem } = useAdminStore();
+  // const { events, loading, error, addItem, updateItem, deleteItem } = useAdminStore();
   const [showForm, setShowForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -42,85 +40,85 @@ const EventsPage = () => {
     }
   );
 
-  const onSubmit = async (data : any) => {
-    console.log('Form data:', data);
-    setSubmitting(true);
-    try {
-      const dateTime = new Date(`${data.date}T${data.time}`).toISOString();
-      const eventData = {
-        ...data,
-        date: dateTime,
-        language: 'fr',
-        location: data.location || '',
-        translations,
-      };
+  // const onSubmit = async (data : any) => {
+  //   console.log('Form data:', data);
+  //   setSubmitting(true);
+  //   try {
+  //     const dateTime = new Date(`${data.date}T${data.time}`).toISOString();
+  //     const eventData = {
+  //       ...data,
+  //       date: dateTime,
+  //       language: 'fr',
+  //       location: data.location || '',
+  //       translations,
+  //     };
       
-      // Remove direct title and description as they're now in language-specific objects
-      // delete eventData.title;
-      // delete eventData.description;
+  //     // Remove direct title and description as they're now in language-specific objects
+  //     // delete eventData.title;
+  //     // delete eventData.description;
 
-      if (editingEvent) {
-        await updateItem('events', editingEvent.id, eventData);
-      } else {
-        await addItem('events', eventData);
-      }
-      setShowForm(false);
-      setEditingEvent(null);
-      reset();
-    } catch (error) {
-      console.error('Failed to save event:', error);
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  //     if (editingEvent) {
+  //       await updateItem('events', editingEvent.id, eventData);
+  //     } else {
+  //       await addItem('events', eventData);
+  //     }
+  //     setShowForm(false);
+  //     setEditingEvent(null);
+  //     reset();
+  //   } catch (error) {
+  //     console.error('Failed to save event:', error);
+  //   } finally {
+  //     setSubmitting(false);
+  //   }
+  // };
 
-  const handleDelete = async (id : string) => {
-    if (window.confirm('Are you sure you want to delete this event?')) {
-      await deleteItem('events', id);
-    }
-  };
+  // const handleDelete = async (id : string) => {
+  //   if (window.confirm('Are you sure you want to delete this event?')) {
+  //     await deleteItem('events', id);
+  //   }
+  // };
 
-  const handleEdit = (event : Event) => {
-    const eventDate = new Date(event.date);
-    setEditingEvent(event);
-    setShowForm(true);
-    setTranslations(
-    ['fr', 'en', 'es'].map(lang => {
-      const tr = event.translations.find(t => t.lang === lang);
-      let description = tr?.description || '';
-      if (Array.isArray(description)) {
-        description = description.join(' ');
-      }
-      return { lang, title: tr?.title || '', description, is_auto_translated: false };
-    })
-  );
-    reset({
-      title: event.translations.find(t => t.lang == 'fr')?.title || '',
-      date: format(eventDate, 'yyyy-MM-dd'),
-      time: format(eventDate, 'HH:mm'),
-      location: event.location,
-      description: (() => {
-        const desc = event.translations.find(t => t.lang == 'fr')?.description;
-        if (Array.isArray(desc)) {
-          return desc.join(' ');
-        }
-        return desc;
-      })(),
-    });
-  };
+  // const handleEdit = (event : Event) => {
+  //   const eventDate = new Date(event.date);
+  //   setEditingEvent(event);
+  //   setShowForm(true);
+  //   setTranslations(
+  //   ['fr', 'en', 'es'].map(lang => {
+  //     const tr = event.translations.find(t => t.lang === lang);
+  //     let description = tr?.description || '';
+  //     if (Array.isArray(description)) {
+  //       description = description.join(' ');
+  //     }
+  //     return { lang, title: tr?.title || '', description, is_auto_translated: false };
+  //   })
+  // );
+  //   reset({
+  //     title: event.translations.find(t => t.lang == 'fr')?.title || '',
+  //     date: format(eventDate, 'yyyy-MM-dd'),
+  //     time: format(eventDate, 'HH:mm'),
+  //     location: event.location,
+  //     description: (() => {
+  //       const desc = event.translations.find(t => t.lang == 'fr')?.description;
+  //       if (Array.isArray(desc)) {
+  //         return desc.join(' ');
+  //       }
+  //       return desc;
+  //     })(),
+  //   });
+  // };
 
-  const filteredEvents = events.filter(event =>
-    (event.translations.find(t => t.lang == 'fr')?.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (event.location || '').toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredEvents = events.filter(event =>
+  //   (event.translations.find(t => t.lang == 'fr')?.title || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //   (event.location || '').toLowerCase().includes(searchTerm.toLowerCase())
+  // );
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-[calc(100vh-64px)]">
-        <div className="w-16 h-16 border-t-4 border-primary-500 border-solid rounded-full animate-spin"></div>
-      </div>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="flex items-center justify-center h-[calc(100vh-64px)]">
+  //       <div className="w-16 h-16 border-t-4 border-primary-500 border-solid rounded-full animate-spin"></div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="p-6">
@@ -139,11 +137,11 @@ const EventsPage = () => {
         </button>
       </div>
 
-      {error && (
+      {/* {error && (
         <div className="bg-error/10 border-l-4 border-error text-error p-4 mb-6">
           {error}
         </div>
-      )}
+      )} */}
 
       <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
         <div className="relative">
@@ -159,7 +157,7 @@ const EventsPage = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredEvents.map((event) => {
+        {/* {filteredEvents.map((event) => {
           const eventDate = new Date(event.date);
           return (
             <div key={event.id} className="bg-white rounded-lg shadow-sm p-6">
@@ -202,7 +200,7 @@ const EventsPage = () => {
               </div>
             </div>
           );
-        })}
+        })} */}
       </div>
 
       {showForm && (
@@ -229,7 +227,7 @@ const EventsPage = () => {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={() => console.log('submit')} className="space-y-4">
               {/* <div>
                 <label htmlFor="title" className="block text-sm font-medium text-neutral-700 mb-1">
                   Titre

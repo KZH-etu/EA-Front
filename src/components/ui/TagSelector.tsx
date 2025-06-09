@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { Tag, X, ChevronDown } from 'lucide-react';
-import { Tags } from '../../stores/useTagStore';
+import { X, ChevronDown, Bookmark } from 'lucide-react';
+import { Tag } from '../../api/types/tags/tags';
 
 interface TagSelectorProps {
-  availableTags: Tags[];
+  availableTags: Tag[];
   selectedTags: string[];
   onChange: (tags: string[]) => void;
   placeholder?: string;
@@ -38,7 +38,7 @@ const TagSelector = ({ availableTags, selectedTags, onChange, placeholder = 'Sé
 
   // Filtrer les tags selon la recherche
   const filteredTags = availableTags.filter(tag =>
-    tag.translations.find(t => t.lang === 'fr')?.title
+    tag.translations.find(t => t.language === 'fr')?.title
       ?.toLowerCase()
       .includes(search.toLowerCase())
   );
@@ -52,7 +52,7 @@ const TagSelector = ({ availableTags, selectedTags, onChange, placeholder = 'Sé
          {selectedTags.length > 0 ? (
           selectedTags.map(tagId => {
             const tag = availableTags.find(t => t.id === tagId);
-            const tagTitle = tag?.translations.find(tr => tr.lang === 'fr')?.title || tagId;
+            const tagTitle = tag?.translations.find(tr => tr.language === 'fr')?.title || tagId;
             return (
               <span
                 key={tagId}
@@ -92,7 +92,7 @@ const TagSelector = ({ availableTags, selectedTags, onChange, placeholder = 'Sé
           </div>
           {filteredTags.length > 0 ? (
             filteredTags.map(tag => {
-              const tagTitle = tag.translations.find(t => t.lang === 'fr')?.title || tag.id;
+              const tagTitle = tag.translations.find(t => t.language === 'fr')?.title || tag.id;
               return (
                 <div
                   key={tag.id}
@@ -102,7 +102,7 @@ const TagSelector = ({ availableTags, selectedTags, onChange, placeholder = 'Sé
                   `}
                   onClick={() => handleTagSelect(tag.id)}
                 >
-                  <Tag size={16} className={`mr-2 ${selectedTags.includes(tag.id) ? 'text-primary-500' : 'text-neutral-400'}`} />
+                  <Bookmark size={16} className={`mr-2 ${selectedTags.includes(tag.id) ? 'text-primary-500' : 'text-neutral-400'}`} />
                   <span>{tagTitle}</span>
                 </div>
               );

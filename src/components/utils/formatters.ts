@@ -1,16 +1,49 @@
+import { DocumentMedia, MediaType } from "../../api/types/document-media/document-media";
+import { DocumentVersion } from "../../api/types/document-versions/document-versions";
+import { Document } from "../../api/types/documents/documents";
+import { Tag } from "../../api/types/tags/tags";
 import { ContentTranslations } from "../../lib/interfacesData";
-import { Books } from "../../stores/useBooksStore";
-import { Entity } from "../../stores/useEntitiesStore";
-import { MediaSupport, MediaType } from "../../stores/useMediaSupportStore";
-import { MediaVersion } from "../../stores/useMediaVersionStore";
-import { Sermon } from "../../stores/useSermonsStore";
 
 interface MappingProps {
-  entities: Entity[];
-  versions: MediaVersion[];
-  medias: MediaSupport[];
+  entities: Document[];
+  versions: DocumentVersion[];
+  medias: DocumentMedia[];
 }
 
+export interface Sermon{
+  id: string,
+  preacher: string,
+  date: Date,
+  type: MediaType,
+  duration?: string,
+  tags: Tag[],
+  availableLanguages: string[],
+  language: string,
+  location?: string,
+  translations: {
+    lang: string,
+    title: string,
+    description: string,
+    url: string,
+  }[]
+}
+
+export interface Books{
+  id: string,
+  author: string,
+  year: number,
+  category: MediaType,
+  coverUrl?: string,
+  tags: Tag[],
+  availableLanguages: string[],
+  language: string,
+  translations: {
+    lang: string,
+    title: string,
+    description: string,
+    url: string,
+  }[]
+}
 
 export const mapSermons = ({ entities, versions, medias }: MappingProps): Sermon[] => {
   console.log('mapSermons called', { entities, versions, medias });
@@ -33,14 +66,14 @@ export const mapSermons = ({ entities, versions, medias }: MappingProps): Sermon
       }));
       sermons.push({
         id: entity.id,
-        preacher: entity.sermonMetadata?.preacher || '',
-        date: entity.sermonMetadata?.preachedAt?.toISOString?.() || '',
+        preacher: entity.sermonMeta?.preacher || '',
+        date: entity.sermonMeta?.preachedAt || new Date(),
         type: MediaType.AUDIO,
         duration: '',
-        tags: entity.tagIds || [],
+        tags: entity.tags|| [],
         availableLanguages,
         language: entityVersions[0]?.languageId || '',
-        location: entity.sermonMetadata?.location || '',
+        location: entity.sermonMeta?.location || '',
         translations,
       } as Sermon);
     }
@@ -56,14 +89,14 @@ export const mapSermons = ({ entities, versions, medias }: MappingProps): Sermon
       }));
       sermons.push({
         id: entity.id,
-        preacher: entity.sermonMetadata?.preacher || '',
-        date: entity.sermonMetadata?.preachedAt || '',
+        preacher: entity.sermonMeta?.preacher || '',
+        date: entity.sermonMeta?.preachedAt || '',
         type: MediaType.VIDEO,
         duration: '',
-        tags: entity.tagIds || [],
+        tags: entity.tags || [],
         availableLanguages,
         language: entityVersions[0]?.languageId || '',
-        location: entity.sermonMetadata?.location || '',
+        location: entity.sermonMeta?.location || '',
         translations,
       } as Sermon);
     }
@@ -88,7 +121,7 @@ export const mapBooks = ({ entities, versions, medias }: MappingProps): Books[] 
       const language = entityVersions[0]?.languageId || '';
 
       // Récupère les tags
-      const tags = entity.tagIds || [];
+      const tags = entity.tags || [];
 
       // Récupère les traductions
       const translations: ContentTranslations[] = entityVersions.map(v => ({
@@ -100,9 +133,9 @@ export const mapBooks = ({ entities, versions, medias }: MappingProps): Books[] 
 
       return {
         id: entity.id,
-        author: entity.bookMetadata?.author || '',
+        author: entity.bookMeta?.author || '',
         category: MediaType.TEXT,
-        year: entity.bookMetadata?.publishAt?.getFullYear?.() || 0,
+        year: entity.bookMeta?.publishedAt?.getFullYear?.() || 0,
         coverUrl: '',
         tags,
         availableLanguages,

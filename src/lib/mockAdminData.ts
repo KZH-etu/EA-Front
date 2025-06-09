@@ -1,16 +1,12 @@
 import { subDays } from 'date-fns';
-import { Entity } from '../stores/useEntitiesStore';
-import { MediaVersion } from '../stores/useMediaVersionStore';
-import { MediaSupport, MediaType } from '../stores/useMediaSupportStore';
-import { Language, LanguageType } from '../stores/useLanguageStore';
-import { Sermon } from '../stores/useSermonsStore';
+import { Document, DocumentCategory } from '../api/types/documents/documents';
 
 export const DEFAULT_PREACHERS = [
   'William Marrion Branham',
   'Ewald Frank'
 ];
 
-export const mockAdminSermons : Sermon[] = [
+export const mockAdminSermons = [
   {
     id: '1',
     preacher: 'Ewald Frank',
@@ -69,74 +65,74 @@ export const mockAdminSermons : Sermon[] = [
 }
 ];
 
-export const mockAdminBooks = [
-  {
-    id: '1',
-    author: 'William Marrion Branham',
-    category: 'book',
-    year: 1960,
-    coverUrl: "https://images.cdn-files-a.com/ready_uploads/media/172549/800_5ceaff1e37730.jpg",
-    tags: ['5', '3'],
-    availableLanguages: ['fr', 'en'],
-    language: 'fr', // langue source
-    location: 'Jeffersonville, Indiana',
-    translations: [
-      {
-        lang: 'fr',
-        title: 'L\'Âge de l\'Église d\'Éphèse',
-        description: 'Une étude approfondie du premier âge de l\'église, révélant les caractéristiques et les défis de cette période cruciale.',
-        downloadUrl: 'https://example.com/books/fr/age-ephese.pdf',
-        readUrl: 'https://example.com/read/fr/age-ephese',
-        is_auto_translated: false
-      },
-      {
-        lang: 'en',
-        title: 'The Church Age of Ephesus',
-        description: 'An in-depth study of the first church age, revealing the characteristics and challenges of this crucial period.',
-        downloadUrl: 'https://example.com/books/en/ephesian-church-age.pdf',
-        readUrl: 'https://example.com/read/en/ephesian-church-age',
-        is_auto_translated: false
-      }
-    ]
-  },
-  {
-    id: '2',
-    author: 'William Marrion Branham',
-    category: 'book',
-    year: 1963,
-    coverUrl: "https://images.cdn-files-a.com/ready_uploads/media/172549/800_5ceaff1e37730.jpg",
-    tags: ['1', '4'],
-    availableLanguages: ['fr', 'en', 'es'],
-    language: 'fr',
-    location: 'Jeffersonville, Indiana',
-    translations: [
-      {
-        lang: 'fr',
-        title: 'Le Septième Sceau',
-        description: 'La révélation du mystérieux septième sceau de l\'Apocalypse et sa signification pour notre temps.',
-        downloadUrl: 'https://example.com/books/fr/septieme-sceau.pdf',
-        readUrl: 'https://example.com/read/fr/septieme-sceau',
-        is_auto_translated: false
-      },
-      {
-        lang: 'en',
-        title: 'The Seventh Seal',
-        description: 'The revelation of the mysterious seventh seal of Revelation and its significance for our time.',
-        downloadUrl: 'https://example.com/books/en/seventh-seal.pdf',
-        readUrl: 'https://example.com/read/en/seventh-seal',
-        is_auto_translated: false
-      },
-      {
-        lang: 'es',
-        title: 'El Séptimo Sello',
-        description: 'La revelación del misterioso séptimo sello del Apocalipsis y su significado para nuestro tiempo.',
-        downloadUrl: 'https://example.com/books/es/septimo-sello.pdf',
-        readUrl: 'https://example.com/read/es/septimo-sello',
-        is_auto_translated: false
-      }
-    ]
-  }
-];
+// export const mockAdminBooks = [
+//   {
+//     id: '1',
+//     author: 'William Marrion Branham',
+//     category: 'book',
+//     year: 1960,
+//     coverUrl: "https://images.cdn-files-a.com/ready_uploads/media/172549/800_5ceaff1e37730.jpg",
+//     tags: ['5', '3'],
+//     availableLanguages: ['fr', 'en'],
+//     language: 'fr', // langue source
+//     location: 'Jeffersonville, Indiana',
+//     translations: [
+//       {
+//         lang: 'fr',
+//         title: 'L\'Âge de l\'Église d\'Éphèse',
+//         description: 'Une étude approfondie du premier âge de l\'église, révélant les caractéristiques et les défis de cette période cruciale.',
+//         downloadUrl: 'https://example.com/books/fr/age-ephese.pdf',
+//         readUrl: 'https://example.com/read/fr/age-ephese',
+//         is_auto_translated: false
+//       },
+//       {
+//         lang: 'en',
+//         title: 'The Church Age of Ephesus',
+//         description: 'An in-depth study of the first church age, revealing the characteristics and challenges of this crucial period.',
+//         downloadUrl: 'https://example.com/books/en/ephesian-church-age.pdf',
+//         readUrl: 'https://example.com/read/en/ephesian-church-age',
+//         is_auto_translated: false
+//       }
+//     ]
+//   },
+//   {
+//     id: '2',
+//     author: 'William Marrion Branham',
+//     category: 'book',
+//     year: 1963,
+//     coverUrl: "https://images.cdn-files-a.com/ready_uploads/media/172549/800_5ceaff1e37730.jpg",
+//     tags: ['1', '4'],
+//     availableLanguages: ['fr', 'en', 'es'],
+//     language: 'fr',
+//     location: 'Jeffersonville, Indiana',
+//     translations: [
+//       {
+//         lang: 'fr',
+//         title: 'Le Septième Sceau',
+//         description: 'La révélation du mystérieux septième sceau de l\'Apocalypse et sa signification pour notre temps.',
+//         downloadUrl: 'https://example.com/books/fr/septieme-sceau.pdf',
+//         readUrl: 'https://example.com/read/fr/septieme-sceau',
+//         is_auto_translated: false
+//       },
+//       {
+//         lang: 'en',
+//         title: 'The Seventh Seal',
+//         description: 'The revelation of the mysterious seventh seal of Revelation and its significance for our time.',
+//         downloadUrl: 'https://example.com/books/en/seventh-seal.pdf',
+//         readUrl: 'https://example.com/read/en/seventh-seal',
+//         is_auto_translated: false
+//       },
+//       {
+//         lang: 'es',
+//         title: 'El Séptimo Sello',
+//         description: 'La revelación del misterioso séptimo sello del Apocalipsis y su significado para nuestro tiempo.',
+//         downloadUrl: 'https://example.com/books/es/septimo-sello.pdf',
+//         readUrl: 'https://example.com/read/es/septimo-sello',
+//         is_auto_translated: false
+//       }
+//     ]
+//   }
+// ];
 
 export const mockAdminEvents = [
   {
@@ -652,139 +648,139 @@ export const mockAdminAboutDetails = [
   }
 ];
 
-export const mockAdminEntities : Entity[] = [
-  {
-    id: "f1012f1e-a09e-49d7-a2d1-90be962a1a1c",
-    globalTitle: "Marcher dans la lumière",
-    categories: ["Sermon"],
-    tagIds: ["1", "4"],
-    sermonMetadata: {
-      id: "f1012f1e-a09e-49d7-a2d1-90be962a1a1c",
-      preacher: "Pasteur Léa Dubois",
-      preachedAt: new Date("2025-04-14T10:00:00Z"),
-      location: "Église Lumière de Paris"
-    }
-  },
-  {
-    id: "7c3eec26-0c02-4a8b-86a3-61f9bca37062",
-    globalTitle: "Réveil spirituel 2025",
-    categories: ["Événement", "Livre"],
-    tagIds: ["3", "2"],
-    bookMetadata: {
-      id: "7c3eec26-0c02-4a8b-86a3-61f9bca37062",
-      author: "Marie Giraud",
-      publishAt: new Date("2025-10-14T10:00:00Z"),
-    },
-    eventMetadata: {
-      id: "7c3eec26-0c02-4a8b-86a3-61f9bca37062",
-      type: "CONFERENCE",
-      startTime: new Date("2025-08-20T18:00:00Z"),
-      endTime: new Date("2025-08-23T20:00:00Z"),
-      location: "Palais des Congrès, Lyon"
-    }
-  },
-  {
-    id: "a4b2c6dd-5e2e-4f13-9e34-6c4d14f5b77b",
-    globalTitle: "Les paraboles de Jésus expliquées",
-    categories: ["Livre"],
-    tagIds: ["5", "2"],
-    bookMetadata: {
-      id: "a4b2c6dd-5e2e-4f13-9e34-6c4d14f5b77b",
-      author: "David N'Guessan",
-      publishAt: new Date("2025-02-14T10:00:00Z")
-    }
-  }
-];
+// export const mockAdminEntities : Document[] = [
+//   {
+//     id: "f1012f1e-a09e-49d7-a2d1-90be962a1a1c",
+//     globalTitle: "Marcher dans la lumière",
+//     categories: [DocumentCategory.SERMON],
+//     tags: ["1", "4"],
+//     sermonMetadata: {
+//       id: "f1012f1e-a09e-49d7-a2d1-90be962a1a1c",
+//       preacher: "Pasteur Léa Dubois",
+//       preachedAt: new Date("2025-04-14T10:00:00Z"),
+//       location: "Église Lumière de Paris"
+//     }
+//   },
+//   {
+//     id: "7c3eec26-0c02-4a8b-86a3-61f9bca37062",
+//     globalTitle: "Réveil spirituel 2025",
+//     categories: ["Événement", "Livre"],
+//     tagIds: ["3", "2"],
+//     bookMetadata: {
+//       id: "7c3eec26-0c02-4a8b-86a3-61f9bca37062",
+//       author: "Marie Giraud",
+//       publishAt: new Date("2025-10-14T10:00:00Z"),
+//     },
+//     eventMetadata: {
+//       id: "7c3eec26-0c02-4a8b-86a3-61f9bca37062",
+//       type: "CONFERENCE",
+//       startTime: new Date("2025-08-20T18:00:00Z"),
+//       endTime: new Date("2025-08-23T20:00:00Z"),
+//       location: "Palais des Congrès, Lyon"
+//     }
+//   },
+//   {
+//     id: "a4b2c6dd-5e2e-4f13-9e34-6c4d14f5b77b",
+//     globalTitle: "Les paraboles de Jésus expliquées",
+//     categories: ["Livre"],
+//     tagIds: ["5", "2"],
+//     bookMetadata: {
+//       id: "a4b2c6dd-5e2e-4f13-9e34-6c4d14f5b77b",
+//       author: "David N'Guessan",
+//       publishAt: new Date("2025-02-14T10:00:00Z")
+//     }
+//   }
+// ];
 
-export const mockAdminMediaVersions: MediaVersion[] = [
-  {
-    id: "mv-001-fr",
-    documentId: "f1012f1e-a09e-49d7-a2d1-90be962a1a1c",
-    languageId: "fr",
-    title: "Marcher dans la lumière",
-    description: "Un sermon inspirant sur la foi et la marche quotidienne avec Dieu.",
-    publishedAt: new Date("2025-04-15T09:00:00Z")
-  },
-    {
-    id: "mv-002-en",
-    documentId: "a4b2c6dd-5e2e-4f13-9e34-6c4d14f5b77b",
-    languageId: "en",
-    title: "The Parables of Jesus Explained",
-    description: "A clear and insightful look at the parables and their relevance today.",
-    publishedAt: new Date("2025-05-10T12:30:00Z")
-  },
-  {
-    id: "mv-003-es",
-    documentId: "7c3eec26-0c02-4a8b-86a3-61f9bca37062",
-    languageId: "es",
-    title: "Despertar espiritual 2025",
-    description: "Una conferencia transformadora para toda la comunidad de fe.",
-    publishedAt: new Date("2025-06-01T14:00:00Z")
-  },
-  {
-    id: "mv-004-de",
-    documentId: "f1012f1e-a09e-49d7-a2d1-90be962a1a1c",
-    languageId: "de",
-    title: "Im Licht wandeln",
-    description: "Eine Predigt über das Leben im Licht Gottes und die tägliche Nachfolge.",
-    publishedAt: new Date("2025-04-18T10:00:00Z")
-  },
-  {
-    id: "mv-005-pt",
-    documentId: "a4b2c6dd-5e2e-4f13-9e34-6c4d14f5b77b",
-    languageId: "pt",
-    title: "As Parábolas de Jesus Explicadas",
-    description: "Uma abordagem acessível às parábolas bíblicas e seu significado espiritual.",
-    publishedAt: new Date("2025-05-15T16:00:00Z")
-  }
-]
+// export const mockAdminMediaVersions: MediaVersion[] = [
+//   {
+//     id: "mv-001-fr",
+//     documentId: "f1012f1e-a09e-49d7-a2d1-90be962a1a1c",
+//     languageId: "fr",
+//     title: "Marcher dans la lumière",
+//     description: "Un sermon inspirant sur la foi et la marche quotidienne avec Dieu.",
+//     publishedAt: new Date("2025-04-15T09:00:00Z")
+//   },
+//     {
+//     id: "mv-002-en",
+//     documentId: "a4b2c6dd-5e2e-4f13-9e34-6c4d14f5b77b",
+//     languageId: "en",
+//     title: "The Parables of Jesus Explained",
+//     description: "A clear and insightful look at the parables and their relevance today.",
+//     publishedAt: new Date("2025-05-10T12:30:00Z")
+//   },
+//   {
+//     id: "mv-003-es",
+//     documentId: "7c3eec26-0c02-4a8b-86a3-61f9bca37062",
+//     languageId: "es",
+//     title: "Despertar espiritual 2025",
+//     description: "Una conferencia transformadora para toda la comunidad de fe.",
+//     publishedAt: new Date("2025-06-01T14:00:00Z")
+//   },
+//   {
+//     id: "mv-004-de",
+//     documentId: "f1012f1e-a09e-49d7-a2d1-90be962a1a1c",
+//     languageId: "de",
+//     title: "Im Licht wandeln",
+//     description: "Eine Predigt über das Leben im Licht Gottes und die tägliche Nachfolge.",
+//     publishedAt: new Date("2025-04-18T10:00:00Z")
+//   },
+//   {
+//     id: "mv-005-pt",
+//     documentId: "a4b2c6dd-5e2e-4f13-9e34-6c4d14f5b77b",
+//     languageId: "pt",
+//     title: "As Parábolas de Jesus Explicadas",
+//     description: "Uma abordagem acessível às parábolas bíblicas e seu significado espiritual.",
+//     publishedAt: new Date("2025-05-15T16:00:00Z")
+//   }
+// ]
 
-export const mockAdminMediaSupport: MediaSupport[] = [
-  {
-    id: '1',
-    documentVersionId: "mv-001-fr",
-    mediaType: MediaType.TEXT,
-    url: "",
-    title: "Texte en français"
-  },
-  {
-    id: '2',
-    documentVersionId: "mv-002-en",
-    mediaType: MediaType.AUDIO,
-    url: "",
-    title: "Lecture audio"
-  },
-  {
-    id: '3',
-    documentVersionId: "mv-002-en",
-    mediaType: MediaType.VIDEO,
-    url: "https://www.youtube.com/embed/4y3n3IdH0rY?si=81PKWo467a9L84Hd",
-    title: "Vidéo YouTube"
-  }
-]
+// export const mockAdminMediaSupport: MediaSupport[] = [
+//   {
+//     id: '1',
+//     documentVersionId: "mv-001-fr",
+//     mediaType: MediaType.TEXT,
+//     url: "",
+//     title: "Texte en français"
+//   },
+//   {
+//     id: '2',
+//     documentVersionId: "mv-002-en",
+//     mediaType: MediaType.AUDIO,
+//     url: "",
+//     title: "Lecture audio"
+//   },
+//   {
+//     id: '3',
+//     documentVersionId: "mv-002-en",
+//     mediaType: MediaType.VIDEO,
+//     url: "https://www.youtube.com/embed/4y3n3IdH0rY?si=81PKWo467a9L84Hd",
+//     title: "Vidéo YouTube"
+//   }
+// ]
 
-export const mockAdminLanguages: Language[] = [
-  {
-    id: "fr",
-    title: "Français",
-    type: LanguageType.INTERNATIONAL,
-  },
-  {
-    id: "en",
-    title: "English",
-    type: LanguageType.INTERNATIONAL,
-  },
-  {
-    id: "es",
-    title: "Español",
-    type: LanguageType.INTERNATIONAL,
-  },
-  {
-    id: "pt",
-    title: "Português",
-    type: LanguageType.INTERNATIONAL,
-  },
-]
+// export const mockAdminLanguages: Language[] = [
+//   {
+//     id: "fr",
+//     title: "Français",
+//     type: LanguageType.INTERNATIONAL,
+//   },
+//   {
+//     id: "en",
+//     title: "English",
+//     type: LanguageType.INTERNATIONAL,
+//   },
+//   {
+//     id: "es",
+//     title: "Español",
+//     type: LanguageType.INTERNATIONAL,
+//   },
+//   {
+//     id: "pt",
+//     title: "Português",
+//     type: LanguageType.INTERNATIONAL,
+//   },
+// ]
 
 
 

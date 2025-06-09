@@ -7,6 +7,7 @@ interface TagState {
   items: Tag[];
   loading: boolean;
   error?: string;
+  hasFetched: boolean;
 
   fetchAll: (lang?: string) => Promise<void>;
   fetchOne: (id: string) => Promise<void>;
@@ -15,16 +16,19 @@ interface TagState {
   remove: (id: string) => Promise<void>;
 }
 
-export const useTagStore = create<TagState>((set) => ({
+export const useTagStore = create<TagState>((set, get) => ({
   items: [],
   loading: false,
   error: undefined,
+  hasFetched: false,
 
   fetchAll: async (lang) => {
+    const { hasFetched } = get();
+    if (hasFetched) return;
     set({ loading: true, error: undefined });
     try {
       const res = await API.fetchTags(lang);
-      set({ items: res.data });
+      set({ items: res.data, hasFetched: true });
     } catch (e: any) {
       set({ error: e.message });
     } finally {
@@ -61,6 +65,7 @@ export const useTagStore = create<TagState>((set) => ({
     try {
       const res = await API.updateTag(id, dto);
       set((state) => ({ items: state.items.map(t => t.id === id ? res.data : t) }));
+      console.log('Tag mis à jour:', res.data);
     } catch (e: any) {
       set({ error: e.message });
     } finally {

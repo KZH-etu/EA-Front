@@ -1,11 +1,11 @@
-enum Language {
+export enum LanguageEnum {
   en = 'en',
   fr = 'fr',
   es = 'es',
 }
 
 export interface CreateTagTranslationDto {
-    language: Language;
+    language: LanguageEnum;
     title: string;
 }
 

@@ -1,24 +1,14 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { MediaSupport, MediaType } from '../../stores/useMediaSupportStore';
-
-interface Entity {
-  id: string;
-  globalTitle: string;
-}
-
-interface MediaVersion {
-  id: string;
-  documentId: string;
-  languageId: string;
-  title: string;
-}
+import { Document } from '../../api/types/documents/documents';
+import { DocumentVersion } from '../../api/types/document-versions/document-versions';
+import { DocumentMedia, MediaType } from '../../api/types/document-media/document-media';
 
 interface MediaSupportFormProps {
-  entities: Entity[];
-  mediaVersions: MediaVersion[];
-  initialData?: MediaSupport | null;
-  onSubmit: (supports: MediaSupport[]) => void;
+  entities: Document[];
+  mediaVersions: DocumentVersion[];
+  initialData?: DocumentMedia | null;
+  onSubmit: (supports: Omit<DocumentMedia, 'id' | 'createdAt'>[]) => void;
   onCancel: () => void;
 }
 
@@ -124,33 +114,33 @@ export function MediaSupportForm({ entities, initialData, mediaVersions, onSubmi
   return (
     <form
       onSubmit={handleSubmit((data) => {
-        const supports: MediaSupport[] = [];
+        const supports: Omit<DocumentMedia, 'id' | 'createdAt'>[] = [];
         if (isTextValid) {
           supports.push({
-            id: initialData?.mediaType === MediaType.TEXT ? initialData.id : '',
             documentVersionId: selectedMediaVersionId,
             mediaType: MediaType.TEXT,
             url: data.textUrl || '',
             title: data.textTitle || '',
+            updatedAt: new Date(),
           });
         }
         if (isAudioValid) {
           supports.push({
-            id: initialData?.mediaType === MediaType.AUDIO ? initialData.id : '',
             documentVersionId: selectedMediaVersionId,
             mediaType: MediaType.AUDIO,
             url: data.audioUrl || '',
             title: data.audioTitle || '',
+            updatedAt: new Date(),
           });
         }
         // Ajoute toujours la vidéo si valide
         if (isVideoValid) {
           supports.push({
-            id: initialData?.mediaType === MediaType.VIDEO ? initialData.id : '',
             documentVersionId: selectedMediaVersionId,
             mediaType: MediaType.VIDEO,
             url: data.videoUrl,
             title: data.videoTitle || '',
+            updatedAt: new Date(),
           });
         }
         onSubmit(supports);

@@ -9,6 +9,7 @@ interface VersionState {
   current?: DocumentVersion;
   loading: boolean;
   error?: string;
+  hasFetched?: boolean;
 
   fetchAll: () => Promise<void>;
   fetchOne: (id: string) => Promise<void>;
@@ -17,13 +18,17 @@ interface VersionState {
   remove: (id: string) => Promise<void>;
 }
 
-export const useVersionStore = create<VersionState>((set) => ({
+export const useVersionStore = create<VersionState>((set, get) => ({
   items: [],
   current: undefined,
   loading: false,
   error: undefined,
+  hasFetched: false,
 
   fetchAll: async () => {
+    const { hasFetched } = get();
+    if (hasFetched) return;
+
     set({ loading: true, error: undefined });
     try {
       const res = await API.fetchVersions();

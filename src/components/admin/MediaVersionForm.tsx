@@ -1,8 +1,8 @@
 import { useState, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { v4 as uuidv4 } from 'uuid';
-import { MediaVersion } from '../../stores/useMediaVersionStore';
-import { Language } from '../../stores/useLanguageStore';
+import { Language } from '../../api/types/languages/languages';
+import { DocumentVersion } from '../../api/types/document-versions/document-versions';
 
 interface Entity {
   id: string;
@@ -13,9 +13,9 @@ interface Entity {
 interface DocumentVersionFormProps {
   entities: Entity[];
   languages: Language[];
-  existingVersions: MediaVersion[];
-  initialData?: MediaVersion | null;
-  onSubmit: (version: MediaVersion) => void;
+  existingVersions: DocumentVersion[];
+  initialData?: DocumentVersion | null;
+  onSubmit: (version: DocumentVersion) => void;
   onCancel: () => void;
 }
 
@@ -33,13 +33,14 @@ export function DocumentVersionForm({
     setValue,
     watch,
     formState: { errors },
-  } = useForm<MediaVersion>({
+  } = useForm<DocumentVersion>({
     defaultValues: initialData || {
       id: '',
       documentId: '',
       languageId: '',
       title: '',
       description: '',
+      publishedAt: new Date()
     },
   });
 
@@ -74,7 +75,7 @@ export function DocumentVersionForm({
         if (!data.id) data.id = uuidv4();
         onSubmit({
           ...data,
-          publishedAt: data.publishedAt ? new Date(data.publishedAt) : undefined,
+          publishedAt: data.publishedAt ? new Date() : undefined,
         });
       })}
       className="space-y-6"
@@ -147,7 +148,7 @@ export function DocumentVersionForm({
           <option value="">Sélectionner une langue</option>
           {languages.map((lang) => (
             <option key={lang.id} value={lang.id}>
-              {lang.title}
+              {lang.name}
             </option>
           ))}
         </select>
@@ -177,6 +178,7 @@ export function DocumentVersionForm({
               {...register('description')}
             />
           </div>
+          <input type="hidden" {...register('publishedAt')} />
         </>
       )}
 

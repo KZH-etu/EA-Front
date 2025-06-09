@@ -1,6 +1,4 @@
-import { useState } from 'react';
-import { useAdminStore } from '../../stores/useAdminStore';
-import {MediaType, MediaSupport, useMediaSupportsStore } from '../../stores/useMediaSupportStore';
+import { useEffect, useState } from 'react';
 import {
   Plus,
   ChevronDown,
@@ -12,7 +10,10 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { MediaSupportForm } from '../../components/admin/MediaSupportForm';
-import { useMediaVersionsStore } from '../../stores/useMediaVersionStore';
+import { DocumentMedia, MediaType } from '../../api/types/document-media/document-media';
+import { useMediaStore } from '../../stores/useMediaStore';
+import { useVersionStore } from '../../stores/useVersionsStore';
+import { useDocumentStore } from '../../stores/useDocumentStore';
 
 const LANGUAGES = [
   { code: 'fr', name: 'Français' },
@@ -29,24 +30,53 @@ const MEDIA_TYPE_LABELS = {
 };
 
 const MediaSupportPage = () => {
-  const { entities, loading: entitiesLoading, error: entitiesError } = useAdminStore();
+  const { 
+    items: entities, 
+    loading: entitiesLoading, 
+    error: entitiesError,
+    hasFetched: hasFetchedEntities,
+    fetchAll: fetchEntities 
+  } = useDocumentStore();
   const {
-    mediaVersions,
+    items: mediaVersions,
     loading: versionsLoading,
     error: versionsError,
-  } = useMediaVersionsStore();
+    hasFetched: hasFetchedVersions,
+    fetchAll: fetchMediaVersions,
+  } = useVersionStore();
 
   const {
-    mediaSupports,
+    items : mediaSupports,
     loading: supportsLoading,
     error: supportsError,
-    addMediaSupport,
-    updateMediaSupport,
-    deleteMediaSupport
-  } = useMediaSupportsStore();
+    hasFetched: hasFetchedSupports,
+    fetchAll: fetchMediaSupports,
+    create : addMediaSupport,
+    update : updateMediaSupport,
+    remove : deleteMediaSupport
+  } = useMediaStore();
+
+  // Chargement initial des données
+  useEffect(() => {
+    console.log('Loading state:', { 
+      hasFetchedEntities,
+      hasFetchedVersions,
+      hasFetchedSupports
+    });
+    if (!hasFetchedEntities) fetchEntities();
+    if (!hasFetchedVersions) fetchMediaVersions();
+    if (!hasFetchedSupports) fetchMediaSupports();
+  }, [
+    hasFetchedEntities,
+    hasFetchedVersions,
+    hasFetchedSupports,
+    fetchEntities,
+    fetchMediaVersions,
+    fetchMediaSupports
+  ]);
 
   const [showForm, setShowForm] = useState(false);
-  const [editingSupport, setEditingSupport] = useState<MediaSupport | null>(null);
+  const [editingSupport, setEditingSupport] = useState<DocumentMedia | null>(null);
   const [expandedEntityId, setExpandedEntityId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -67,8 +97,6 @@ const MediaSupportPage = () => {
   const getMediaTypesForEntity = (entityId: string) => {
     const versions = mediaVersions.filter(v => v.documentId === entityId);
     const versionIds = versions.map(v => v.id);
-    console.log('versionIds pour l’entité', entityId, versionIds);
-    console.log('mediaSupports pour l’entité', entityId, mediaSupports);
     const types = Array.from(
       new Set(
         mediaSupports
@@ -81,22 +109,21 @@ const MediaSupportPage = () => {
 
   // Récupère les MediaVersions pour une entité
   const getVersionsForEntity = (entityId: string) => {
-    console.log('entitéId et mediaVersion', entityId, mediaVersions);
     return mediaVersions.filter(v => v.documentId === entityId);
   }
 
   // Récupère les MediaSupports pour une version
   const getSupportsForVersion = (versionId: string) => {
-    console.log('versionId et mediaSupport',versionId, mediaSupports);
     return mediaSupports.filter(s => s.documentVersionId === versionId);
   }
 
-  const handleFormSubmit = async (supports: MediaSupport[]) => {
+  const handleFormSubmit = async (supports: DocumentMedia[]) => {
     setSubmitting(true);
     try {
       if (editingSupport) {
         for (const support of supports) {
-          await updateMediaSupport(support.id, support);
+          const { id, createdAt, ...dataWithoutId } = support;
+          await updateMediaSupport(support.id, dataWithoutId);
         }
       } else {
         for (const support of supports) {
@@ -110,13 +137,13 @@ const MediaSupportPage = () => {
     }
   };
 
-  const handleDelete = async (support: MediaSupport) => {
+  const handleDelete = async (support: DocumentMedia) => {
     if (window.confirm('Voulez-vous vraiment supprimer ce support ?')) {
       await deleteMediaSupport(support.id);
     }
   };
 
-  const handleEdit = (support: MediaSupport) => {
+  const handleEdit = (support: DocumentMedia) => {
     setEditingSupport(support);
     setShowForm(true);
   };

@@ -40,12 +40,12 @@ import { useDocumentStore } from './stores/useDocumentStore';
 import { useLanguageStore } from './stores/useLanguageStore';
 
 function App() {
-  const fetchAllDocs = useDocumentStore((s) => s.fetchAll);
-  const fetchLangs   = useLanguageStore((s) => s.fetchAll);
+  const {hasFetched: hasFetchedEntities,fetchAll: fetchAllDocs} = useDocumentStore();
+  const {hasFetched: hasFetchedLanguages,fetchAll: fetchLangs}   = useLanguageStore();
 
   useEffect(() => {
-    fetchLangs();
-    fetchAllDocs();
+    if(hasFetchedEntities) fetchLangs();
+    if(hasFetchedLanguages) fetchAllDocs();
     // fetch all Global data
   }, [fetchLangs, fetchAllDocs]);
   return (

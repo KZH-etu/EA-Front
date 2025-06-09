@@ -1,6 +1,8 @@
-import { useState } from 'react';
-import { useLanguagesStore, LanguageType, Language } from '../../stores/useLanguageStore';
+import { useEffect, useState } from 'react';
 import { Plus, Edit2, Trash2, Save, X } from 'lucide-react';
+import { Language, LanguageType } from '../../api/types/languages/languages';
+import { useLanguageStore } from '../../stores/useLanguageStore';
+import { sub } from 'date-fns';
 
 const LANG_TYPE_OPTIONS = [
   { value: LanguageType.INTERNATIONAL, label: 'International' },
@@ -13,25 +15,39 @@ const COUNTRY_OPTIONS = [
 ];
 
 const LanguagesPage = () => {
-  const { languages, loading, error, addLanguage, updateLanguage, deleteLanguage } = useLanguagesStore();
+  const {
+    items: languages, 
+    loading, 
+    error, 
+    hasFetched,
+    fetchAll: fetchLanguages,
+    create: addLanguage, 
+    update: updateLanguage, 
+    remove: deleteLanguage 
+  } = useLanguageStore();
+
+  useEffect(() => {
+    if(!hasFetched) fetchLanguages();
+  }, [hasFetched, fetchLanguages]);
 
   // Ajout
-  const [newLang, setNewLang] = useState({ id: '', title: '', type: LanguageType.INTERNATIONAL, origin: '' });
+  const [newLang, setNewLang] = useState({ id: '', name: '', type: LanguageType.INTERNATIONAL, countryOfOrigin: '' });
   const [submitting, setSubmitting] = useState(false);
 
   // Edition
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [editLang, setEditLang] = useState({ id: '', title: '', type: LanguageType.INTERNATIONAL, origin: '' });
+  const [editLang, setEditLang] = useState({id: '', name: '', type: LanguageType.INTERNATIONAL, countryOfOrigin: '' });
 
   // Ajout d'une langue
   const handleAdd = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newLang.id.trim() || !newLang.title.trim()) return;
-    if (newLang.type === LanguageType.LOCAL && !newLang.origin.trim()) return;
+    if (!newLang.id.trim() || !newLang.name.trim()) return;
+    if (newLang.type === LanguageType.LOCAL && !newLang.countryOfOrigin.trim()) return;
+    newLang.name = newLang.name.charAt(0).toUpperCase();
     setSubmitting(true);
     try {
       await addLanguage({ ...newLang });
-      setNewLang({ id: '', title: '', type: LanguageType.INTERNATIONAL, origin: '' });
+      setNewLang({ id: '', name: '', type: LanguageType.INTERNATIONAL, countryOfOrigin: '' });
     } catch (err) {
       console.error('Erreur ajout langue', err);
     } finally {
@@ -41,17 +57,19 @@ const LanguagesPage = () => {
 
   // Edition d'une langue
   const handleEdit = (lang: Language) => {
-    setEditingId(lang.id);
-    setEditLang({ ...lang, origin: lang.origin ?? '' });
+    setEditLang({ ...lang, countryOfOrigin: lang.countryOfOrigin ?? '' });
+    setEditingId(lang.id); // Ajoute cette ligne
   };
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editLang.id.trim() || !editLang.title.trim()) return;
-    if (editLang.type === LanguageType.LOCAL && !editLang.origin.trim()) return;
+    if (!editLang.id.trim() || !editLang.name.trim()) return;
+    if (editLang.type === LanguageType.LOCAL && !editLang.countryOfOrigin.trim()) return;
+
     setSubmitting(true);
     try {
-      await updateLanguage(editLang.id, { ...editLang });
+      const { id, ...dataWithoutId } = editLang;
+      await updateLanguage(id, dataWithoutId); // envoie seulement les champs modifiables
       setEditingId(null);
     } catch (err) {
       console.error('Erreur modification langue', err);
@@ -64,6 +82,7 @@ const LanguagesPage = () => {
     if (!window.confirm('Supprimer cette langue ?')) return;
     setSubmitting(true);
     try {
+      console.log('code', id);
       await deleteLanguage(id);
     } catch (err) {
       console.error('Erreur suppression langue', err);
@@ -108,8 +127,8 @@ const LanguagesPage = () => {
           <input
             type="text"
             className="form-input"
-            value={newLang.title}
-            onChange={e => setNewLang(l => ({ ...l, title: e.target.value }))}
+            value={newLang.name}
+            onChange={e => setNewLang(l => ({ ...l, name: e.target.value }))}
             placeholder="Français, English..."
             required
             disabled={submitting}
@@ -123,7 +142,7 @@ const LanguagesPage = () => {
             onChange={e => setNewLang(l => ({
               ...l,
               type: e.target.value as LanguageType,
-              origin: e.target.value === LanguageType.LOCAL ? l.origin : ''
+              origin: e.target.value === LanguageType.LOCAL ? l.countryOfOrigin : ''
             }))}
             required
             disabled={submitting}
@@ -137,11 +156,10 @@ const LanguagesPage = () => {
           <div>
             <label className="block text-sm font-medium mb-1">Origine *</label>
             <input
-              list="country-list"
               type="text"
               className="form-input"
-              value={newLang.origin}
-              onChange={e => setNewLang(l => ({ ...l, origin: e.target.value }))}
+              value={newLang.countryOfOrigin}
+              onChange={e => setNewLang(l => ({ ...l, countryOfOrigin: e.target.value }))}
               placeholder="France, England..."
               required
               disabled={submitting}
@@ -181,8 +199,7 @@ const LanguagesPage = () => {
                     value={editLang.id}
                     onChange={e => setEditLang(l => ({ ...l, id: e.target.value }))}
                     required
-                    // Le code est modifiable en édition
-                    disabled={submitting}
+                    disabled={true}
                   />
                 </div>
                 <div>
@@ -190,8 +207,8 @@ const LanguagesPage = () => {
                   <input
                     type="text"
                     className="form-input"
-                    value={editLang.title}
-                    onChange={e => setEditLang(l => ({ ...l, title: e.target.value }))}
+                    value={editLang.name}
+                    onChange={e => setEditLang(l => ({ ...l, name: e.target.value }))}
                     required
                     disabled={submitting}
                   />
@@ -204,7 +221,7 @@ const LanguagesPage = () => {
                     onChange={e => setEditLang(l => ({
                       ...l,
                       type: e.target.value as LanguageType,
-                      origin: e.target.value === LanguageType.LOCAL ? l.origin : ''
+                      origin: e.target.value === LanguageType.LOCAL ? l.countryOfOrigin : ''
                     }))}
                     required
                     disabled={submitting}
@@ -221,8 +238,8 @@ const LanguagesPage = () => {
                       list="country-list"
                       type="text"
                       className="form-input"
-                      value={editLang.origin}
-                      onChange={e => setEditLang(l => ({ ...l, origin: e.target.value }))}
+                      value={editLang.countryOfOrigin}
+                      onChange={e => setEditLang(l => ({ ...l, countryOfOrigin: e.target.value }))}
                       placeholder="France, England..."
                       required
                       disabled={submitting}
@@ -257,10 +274,10 @@ const LanguagesPage = () => {
                 className="flex items-center justify-between p-3 bg-neutral-50 rounded"
               >
                 <div>
-                  <span className="font-semibold">{lang.title}</span>
+                  <span className="font-semibold">{lang.name}</span>
                   <span className="ml-2 text-xs text-neutral-500">({lang.id})</span>
                   <span className="ml-2 text-xs text-neutral-500">{lang.type === LanguageType.INTERNATIONAL ? 'International' : 'Local'}</span>
-                  {lang.origin && <span className="ml-2 text-xs text-neutral-400">({lang.origin})</span>}
+                  {lang.countryOfOrigin && <span className="ml-2 text-xs text-neutral-400">({lang.countryOfOrigin})</span>}
                 </div>
                 <div className="flex items-center space-x-2">
                   <button

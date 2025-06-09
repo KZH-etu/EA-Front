@@ -9,6 +9,7 @@ interface DocumentState {
   current?: Document;
   loading: boolean;
   error?: string;
+  hasFetched: boolean;
 
   fetchAll: () => Promise<void>;
   fetchOne: (id: string) => Promise<void>;
@@ -17,17 +18,21 @@ interface DocumentState {
   remove: (id: string) => Promise<void>;
 }
 
-export const useDocumentStore = create<DocumentState>((set) => ({
+export const useDocumentStore = create<DocumentState>((set, get) => ({
   items: [],
   current: undefined,
   loading: false,
   error: undefined,
+  hasFetched: false,
 
   fetchAll: async () => {
+    const { hasFetched } = get();
+    if (hasFetched) return;
+
     set({ loading: true, error: undefined });
     try {
       const res = await API.fetchDocuments();
-      set({ items: res.data });
+      set({ items: res.data, hasFetched: true });
     } catch (e: any) {
       set({ error: e.message });
     } finally {

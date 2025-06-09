@@ -1,29 +1,27 @@
 import { useForm, Controller } from 'react-hook-form';
-import { v4 as uuidv4 } from 'uuid';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import TagSelector from '../ui/TagSelector';
-import { Tags } from '../../stores/useTagStore';
-import { Entity } from '../../stores/useEntitiesStore';
-
-type EventType = 'CONFERENCE' | 'SEMINAR' | 'MEETING'; // adapte selon ton projet
+import { Document, DocumentCategory, EventType } from '../../api/types/documents/documents';
+import { Tag } from '../../api/types/tags/tags';
+import { CreateDocumentDto, UpdateDocumentDto } from '../../api/types/documents/create-document.dto';
 
 interface EntityFormProps {
-  tags: Tags[];
-  initialData?: Entity | null;
-  onSubmit: (entity: Entity) => void;
+  tags: Tag[];
+  initialData?: CreateDocumentDto| null;
+  onSubmit: (entity: UpdateDocumentDto) => void;
   onCancel: () => void;
 }
 
 const CATEGORY_OPTIONS = [
-  { value: 'Livre', label: 'Livre' },
-  { value: 'Événement', label: 'Événement' },
-  { value: 'Sermon', label: 'Sermon' }
+  { value: DocumentCategory.BOOK, label: 'Livre' },
+  { value: DocumentCategory.EVENT, label: 'Événement' },
+  { value: DocumentCategory.SERMON, label: 'Sermon' }
 ];
 
 const EVENT_TYPE_OPTIONS = [
-  { value: 'CONFERENCE', label: 'Conférence' },
-  { value: 'SEMINAR', label: 'Séminaire' },
-  { value: 'MEETING', label: 'Réunion' }
+  { value: EventType.CONVENTION, label: 'Conférence' },
+  { value: EventType.SEMINAR, label: 'Séminaire' },
+  { value: EventType.PRAYER, label: 'Réunion' }
 ];
 
 export function EntityForm({ tags, initialData, onSubmit, onCancel }: EntityFormProps) {
@@ -35,14 +33,14 @@ export function EntityForm({ tags, initialData, onSubmit, onCancel }: EntityForm
     control,
     reset, // <--- ajoute reset
     formState: { errors }
-  } = useForm<Entity>({
+  } = useForm<UpdateDocumentDto>({
     defaultValues: initialData || {
       globalTitle: '',
       categories: [],
       tagIds: [],
-      bookMetadata: undefined,
-      sermonMetadata: undefined,
-      eventMetadata: undefined
+      bookMeta: undefined,
+      sermonMeta: undefined,
+      eventMeta: undefined
     }
   });
 
@@ -51,27 +49,35 @@ export function EntityForm({ tags, initialData, onSubmit, onCancel }: EntityForm
 
   // Génère un UUID à la création
   useEffect(() => {
-    if (initialData) reset(initialData);
-    if (!initialData) {setValue('id', uuidv4()); };
+    if (initialData) {
+      // Nettoie les id dans les sous-objets
+      const cleanMeta = (meta: any) => {
+        if (!meta) return undefined;
+        const { id, ...rest } = meta;
+        return rest;
+      };
+      reset({
+        ...initialData,
+        bookMeta: cleanMeta(initialData.bookMeta),
+        sermonMeta: cleanMeta(initialData.sermonMeta),
+        eventMeta: cleanMeta(initialData.eventMeta),
+      });
+    }
   }, [initialData, setValue, reset]);
 
   return (
     <form
       onSubmit={handleSubmit((data) => {
-        // Ajoute l'id si création
-        if (!data.id) data.id = uuidv4();
-
         // Nettoie les métadonnées non utilisées
-        if (!selectedCategories.includes('Livre')) delete data.bookMetadata;
-        if (!selectedCategories.includes('Sermon')) delete data.sermonMetadata;
-        if (!selectedCategories.includes('Événement')) delete data.eventMetadata;
+        if (!selectedCategories.includes(DocumentCategory.BOOK)) delete data.bookMeta;
+        if (!selectedCategories.includes(DocumentCategory.SERMON)) delete data.sermonMeta;
+        if (!selectedCategories.includes(DocumentCategory.EVENT)) delete data.eventMeta;
 
         onSubmit(data);
+        
       })}
       className="space-y-6"
     >
-      <input type="hidden" {...register('id')} />
-
       <div>
         <label className="block font-medium mb-1">Titre global *</label>
         <input
@@ -122,20 +128,19 @@ export function EntityForm({ tags, initialData, onSubmit, onCancel }: EntityForm
       </div>
 
       {/* BOOK */}
-      {selectedCategories.includes('Livre') && (
+      {selectedCategories.includes(DocumentCategory.BOOK) && (
         <fieldset className="border rounded p-4">
           <legend className="font-semibold">Livre</legend>
-          <input type="hidden" {...register('bookMetadata.id')} value={watch('id')} />
           <div>
             <label className="block font-medium mb-1">Auteur *</label>
             <input
               className="form-input w-full"
-              {...register('bookMetadata.author', {
+              {...register('bookMeta.author', {
                 required: 'Auteur requis'
               })}
             />
-            {errors.bookMetadata?.author && (
-              <p className="text-error text-sm">{errors.bookMetadata.author.message}</p>
+            {errors.bookMeta?.author && (
+              <p className="text-error text-sm">{errors.bookMeta.author.message}</p>
             )}
           </div>
           <div>
@@ -143,27 +148,26 @@ export function EntityForm({ tags, initialData, onSubmit, onCancel }: EntityForm
             <input
               type="datetime-local"
               className="form-input w-full"
-              {...register('bookMetadata.plublishAt')}
+              {...register('bookMeta.publishedAt')}
             />
           </div>
         </fieldset>
       )}
 
       {/* SERMON */}
-      {selectedCategories.includes('Sermon') && (
+      {selectedCategories.includes(DocumentCategory.SERMON) && (
         <fieldset className="border rounded p-4">
           <legend className="font-semibold">Sermon</legend>
-          <input type="hidden" {...register('sermonMetadata.id')} value={watch('id')} />
           <div>
             <label className="block font-medium mb-1">Prédicateur *</label>
             <input
               className="form-input w-full"
-              {...register('sermonMetadata.preacher', {
+              {...register('sermonMeta.preacher', {
                 required: 'Prédicateur requis'
               })}
             />
-            {errors.sermonMetadata?.preacher && (
-              <p className="text-error text-sm">{errors.sermonMetadata.preacher.message}</p>
+            {errors.sermonMeta?.preacher && (
+              <p className="text-error text-sm">{errors.sermonMeta.preacher.message}</p>
             )}
           </div>
           <div>
@@ -171,35 +175,34 @@ export function EntityForm({ tags, initialData, onSubmit, onCancel }: EntityForm
             <input
               type="datetime-local"
               className="form-input w-full"
-              {...register('sermonMetadata.preachedAt', {
+              {...register('sermonMeta.preachedAt', {
                 required: 'Date requise',
                 valueAsDate: true
               })}
             />
-            {errors.sermonMetadata?.preachedAt && (
-              <p className="text-error text-sm">{errors.sermonMetadata.preachedAt.message}</p>
+            {errors.sermonMeta?.preachedAt && (
+              <p className="text-error text-sm">{errors.sermonMeta.preachedAt.message}</p>
             )}
           </div>
           <div>
             <label className="block font-medium mb-1">Lieu</label>
             <input
               className="form-input w-full"
-              {...register('sermonMetadata.location')}
+              {...register('sermonMeta.location')}
             />
           </div>
         </fieldset>
       )}
 
       {/* EVENT */}
-      {selectedCategories.includes('Événement') && (
+      {selectedCategories.includes(DocumentCategory.EVENT) && (
         <fieldset className="border rounded p-4">
           <legend className="font-semibold">Événement</legend>
-          <input type="hidden" {...register('eventMetadata.id')} value={watch('id')} />
           <div>
             <label className="block font-medium mb-1">Type *</label>
             <Controller
               control={control}
-              name="eventMetadata.type"
+              name="eventMeta.type"
               rules={{ required: 'Type requis' }}
               render={({ field }) => (
                 <select className="form-input w-full" {...field}>
@@ -210,8 +213,8 @@ export function EntityForm({ tags, initialData, onSubmit, onCancel }: EntityForm
                 </select>
               )}
             />
-            {errors.eventMetadata?.type && (
-              <p className="text-error text-sm">{errors.eventMetadata.message}</p>
+            {errors.eventMeta?.type && typeof errors.eventMeta.type === 'object' && 'message' in errors.eventMeta.type && (
+              <p className="text-error text-sm">{errors.eventMeta.type.message}</p>
             )}
           </div>
           <div>
@@ -219,13 +222,13 @@ export function EntityForm({ tags, initialData, onSubmit, onCancel }: EntityForm
             <input
               type="datetime-local"
               className="form-input w-full"
-              {...register('eventMetadata.startTime', {
+              {...register('eventMeta.startTime', {
                 required: 'Début requis',
                 valueAsDate: true
               })}
             />
-            {errors.eventMetadata?.startTime && (
-              <p className="text-error text-sm">{errors.eventMetadata.startTime.message}</p>
+            {errors.eventMeta?.startTime && (
+              <p className="text-error text-sm">{errors.eventMeta.startTime.message}</p>
             )}
           </div>
           <div>
@@ -233,14 +236,14 @@ export function EntityForm({ tags, initialData, onSubmit, onCancel }: EntityForm
             <input
               type="datetime-local"
               className="form-input w-full"
-              {...register('eventMetadata.endTime', { valueAsDate: true })}
+              {...register('eventMeta.endTime', { valueAsDate: true })}
             />
           </div>
           <div>
             <label className="block font-medium mb-1">Lieu</label>
             <input
               className="form-input w-full"
-              {...register('eventMetadata.location')}
+              {...register('eventMeta.location')}
             />
           </div>
         </fieldset>

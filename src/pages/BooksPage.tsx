@@ -3,13 +3,14 @@ import { motion } from 'framer-motion';
 import { Search, Filter, Book, Globe, MapPin, User, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTagStore } from '../stores/useTagStore';
-import { useBooks } from '../hooks/useBooks';
 import { useLanguageStore } from '../stores/useFrontEndLanguageStore';
 import { useTranslation } from '../hooks/useTranslation';
 import PageHeader from '../components/ui/PageHeader';
 import TagSelector from '../components/ui/TagSelector';
 import LanguageSelector from '../components/ui/LanguageSelector';
+import { useBooks } from '../hooks/useBooks';
 import { Document } from '../api/types/documents/documents';
+import { MediaType } from '../api/types/document-media/document-media';
 
 const ITEMS_PER_PAGE_OPTIONS = [12, 24, 48];
 
@@ -31,7 +32,7 @@ const LOCATIONS = [
 
 const BooksPage = () => {
   const { books, loading, error} = useBooks();
-  const { items: tags, fetchAll: fetchTags } = useTagStore();
+  const { items: tags,hasFetched, fetchAll: fetchTags } = useTagStore();
   const { currentLanguage } = useLanguageStore();  //  <--- This now needs to be a language ID for it to work!!!
   const { t } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
@@ -50,7 +51,7 @@ const BooksPage = () => {
   const [actionType, setActionType] = useState<'download' | 'read' | null>(null);
 
   useEffect(() => {
-    fetchTags();
+    if(hasFetched) fetchTags();
   }, []);
 
   useEffect(() => {
@@ -63,19 +64,24 @@ const BooksPage = () => {
     setShowLanguageSelector(true);
   };
 
-  // THIS DOESNT WORK ANYMORE!!! CHANGES NEEDED
-  /*
+  
   const handleLanguageSelect = (langCode: string) => {
     if (!selectedBook || !actionType) return;
 
-    const url = actionType === 'download' 
-      ? selectedBook.versions.find(value => value.lang == currentLanguage)?.downloadUrl
-      : selectedBook.translations.find(value => value.lang == currentLanguage)?.readUrl;
+    const translation = selectedBook.versions?.find(t => t.languageId == langCode);
+    const url = translation?.mediaItems?.find(m => m.mediaType == MediaType.TEXT)?.url;
 
     if (url) {
       if (actionType === 'download') {
-        window.location.href = url;
+        // Déclenche le téléchargement du PDF
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = '';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       } else {
+        // Lecture en ligne (ouvre dans un nouvel onglet)
         window.open(url, '_blank');
       }
     }
@@ -83,9 +89,7 @@ const BooksPage = () => {
     setShowLanguageSelector(false);
     setSelectedBook(null);
     setActionType(null);
-
   };
-  */
 
   const filteredBooks = books.filter(book => {
 
@@ -94,9 +98,9 @@ const BooksPage = () => {
     const tagsToStrings = book.tags?.map(tag => tag.id)   // we need to use the id for the tags
 
     const matchesSearch = book.versions?.find(value => value.languageId == currentLanguage)?.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         book.bookMeta?.author.toLowerCase().includes(searchTerm.toLowerCase());
+                          book.bookMeta?.author.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = !selectedCategory || categoriesToString?.includes(selectedCategory)
-    const matchesAuthor = !selectedAuthor || book.bookMeta?.author === selectedAuthor;
+    const matchesAuthor = !selectedAuthor ||  book.bookMeta?.author === selectedAuthor;
     const matchesLanguage = !selectedLanguage || languageList?.includes(selectedLanguage);
     const matchesTags = selectedTags.length === 0 || 
                        selectedTags.every(tag => tagsToStrings?.includes(tag));
@@ -108,7 +112,7 @@ const BooksPage = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedBooks = filteredBooks.slice(startIndex, startIndex + itemsPerPage);
 
-  const uniqueAuthors = [...new Set(books.map(book => book?.bookMeta?.author))].sort();
+  const uniqueAuthors = [...new Set(books.map(book =>  book.bookMeta?.author))].sort();
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -282,7 +286,7 @@ const BooksPage = () => {
                   {t('common.tags')}
                 </label>
                 <TagSelector
-                  availableTags={tags.map(tag => tag.id)}
+                  availableTags={tags}
                   selectedTags={selectedTags}
                   onChange={setSelectedTags}
                   placeholder={t('books.selectTags')}
@@ -371,13 +375,6 @@ const BooksPage = () => {
                           {book.year}
                         </span>
                       </div>
-
-                      {book.category === 'sermon' && book.location && (
-                        <div className="mt-2 flex items-center text-xs text-neutral-500">
-                          <MapPin size={12} className="mr-1" />
-                          <span className="truncate">{book.location}</span>
-                        </div>
-                      )}
                     </div>
 
                     <div className="p-3 border-t border-neutral-100">

@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useAdminStore } from '../../stores/useAdminStore';
-import { MediaVersion, useMediaVersionsStore, } from '../../stores/useMediaVersionStore';
 import {
   Plus,
   Search,
@@ -12,38 +10,69 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { DocumentVersionForm } from '../../components/admin/MediaVersionForm';
-import { useEntitiesStore } from '../../stores/useEntitiesStore';
-import { useLanguagesStore } from '../../stores/useLanguageStore';
+import { useDocumentStore } from '../../stores/useDocumentStore';
+import { useVersionStore } from '../../stores/useVersionsStore';
+import { useLanguageStore } from '../../stores/useLanguageStore';
+import { DocumentVersion } from '../../api/types/document-versions/document-versions';
 
 const VersionMediaPage = () => {
-  const { entities, loading: entitiesLoading, error: entitiesError, fetchEntities } = useEntitiesStore();
-  const { languages, fetchLanguages } = useLanguagesStore();
+  const { 
+    items: entities, 
+    loading: entitiesLoading, 
+    error: entitiesError, 
+    hasFetched: hasFetchedEntities,
+    fetchAll: fetchEntities 
+  } = useDocumentStore();
+  const { 
+    items: languages, 
+    loading: loadingLanguage,
+    error: languageError, 
+    hasFetched: hasFetchedLanguages,
+    fetchAll: fetchLanguages 
+  } = useLanguageStore();
 
   // MediaVersions = versions traduites
   const {
-    mediaVersions,
+    items: mediaVersions,
     loading: versionsLoading,
     error: versionsError,
-    addMediaVersion,
-    updateMediaVersion,
-    deleteMediaVersion
-  } = useMediaVersionsStore();
+    hasFetched: hasFetchedVersions,
+    fetchAll: fetchMediaVersions,
+    create: addMediaVersion,
+    update: updateMediaVersion,
+    remove: deleteMediaVersion
+  } = useVersionStore();
+
+  useEffect(() => {
+    console.log('Loading state:', { 
+      hasFetchedEntities,
+      hasFetchedLanguages,
+      hasFetchedVersions
+    });
+    if(!hasFetchedVersions) fetchMediaVersions();
+    if(!hasFetchedEntities) fetchEntities();
+    if(!hasFetchedLanguages) fetchLanguages();
+  }, [hasFetchedEntities, hasFetchedLanguages, hasFetchedVersions, fetchMediaVersions, fetchEntities, fetchLanguages]);
 
   const [showForm, setShowForm] = useState(false);
-  const [editingVersion, setEditingVersion] = useState<MediaVersion | null>(null);
+  const [editingVersion, setEditingVersion] = useState<DocumentVersion | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [submitting, setSubmitting] = useState(false);
+
+  console.log('Entities:', entities);
+  console.log('Media Versions:', mediaVersions);
+  console.log('Languages:', languages);
 
   const filteredVersions = mediaVersions.filter((version) => {
     const entity = entities.find(e => e.id === version.documentId);
     return (
       (entity?.globalTitle?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
       (version.title?.toLowerCase().includes(searchTerm.toLowerCase()) ?? false) ||
-      (languages.find(l => l.id === version.languageId)?.title.toLowerCase().includes(searchTerm.toLowerCase()) ?? false)
+      (languages.find(l => l.id === version.languageId)?.name.toLowerCase().includes(searchTerm.toLowerCase()) ?? false)
     );
   });
 
-  const handleFormSubmit = async (version : MediaVersion) => {
+  const handleFormSubmit = async (version : DocumentVersion) => {
     setSubmitting(true);
     try {
       if (editingVersion) {
@@ -64,12 +93,12 @@ const VersionMediaPage = () => {
     }
   };
 
-  const handleEdit = (version: MediaVersion) => {
+  const handleEdit = (version: DocumentVersion) => {
     setEditingVersion(version);
     setShowForm(true);
   };
 
-  if (entitiesLoading || versionsLoading) {
+  if (entitiesLoading || versionsLoading || loadingLanguage) {
     return (
       <div className="flex items-center justify-center h-[calc(100vh-64px)]">
         <div className="w-16 h-16 border-t-4 border-primary-500 border-solid rounded-full animate-spin"></div>
@@ -132,7 +161,7 @@ const VersionMediaPage = () => {
                   <td className="px-6 py-4">{entity?.globalTitle || <span className="text-neutral-400">Inconnu</span>}</td>
                   <td className="px-6 py-4 flex items-center gap-2">
                     <Globe size={16} className="text-neutral-400" />
-                    {languages.find(l => l.id === version.languageId)?.title}
+                    {languages.find(l => l.id === version.languageId)?.name}
                   </td>
                   <td className="px-6 py-4">{version.title}</td>
                   <td className="px-6 py-4 flex items-center gap-2">

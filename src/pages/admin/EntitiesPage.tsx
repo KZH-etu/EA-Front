@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useAdminStore } from '../../stores/useAdminStore';
 import { 
   Plus, 
   Search, 
@@ -11,29 +10,41 @@ import {
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { EntityForm } from '../../components/admin/EntityForm';
-import { Entity, useEntitiesStore } from '../../stores/useEntitiesStore';
-import { useTagsStore } from '../../stores/useTagStore';
+import { useDocumentStore } from '../../stores/useDocumentStore';
+import { useTagStore } from '../../stores/useTagStore';
+import { Document } from '../../api/types/documents/documents';
+import { CreateDocumentDto } from '../../api/types/documents/create-document.dto';
 
 const EntitiesPage = () => {
-  const { entities, loading, error, fetchEntities, addEntity, updateEntity, deleteEntity } = useEntitiesStore();
-  const { tags, fetchTags } = useTagsStore();
+  const { 
+    items: entities, 
+    loading: loadingEntities, 
+    error: errorEntities, 
+    hasFetched: hasFetchedEntities,
+    fetchAll: fetchEntities, 
+    create: addEntity, 
+    update: updateEntity, 
+    remove: deleteEntity 
+  } = useDocumentStore();
+  const { 
+    items: tags, 
+    loading: loadingTags,
+    error: errorTags,
+    hasFetched: hasFetchedTags,
+    fetchAll: fetchTags 
+  } = useTagStore();
 
   useEffect(() => {
-      if (!loading && entities.length === 0) {
-        fetchEntities();
-        fetchTags();
-      }
-    }, [fetchEntities, loading, entities.length]);
+      if(!hasFetchedEntities) fetchEntities();
+      if(!hasFetchedTags) fetchTags();
+    }, [hasFetchedEntities, hasFetchedTags, fetchEntities, fetchTags]);
 
   const [showForm, setShowForm] = useState(false);
-  const [editingEntity, setEditingEntity] = useState<Entity | null>(null);
+  const [editingEntity, setEditingEntity] = useState<Document | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [sortField, setSortField] = useState('globalTitle');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
-
-  console.log('Entities:', entities);
-
 
   const handleSort = (field : string) => {
     if (field === sortField) {
@@ -50,7 +61,7 @@ const EntitiesPage = () => {
     }
   };
 
-  const handleEdit = (entity: Entity) => {
+  const handleEdit = (entity: Document) => {
     setEditingEntity(entity);
     setShowForm(true);
   };
@@ -66,7 +77,7 @@ const EntitiesPage = () => {
     return bValue.localeCompare(aValue);
   });
 
-  if (loading) {
+  if (loadingEntities || loadingTags) {
     return (
       <div className="flex items-center justify-center h-[calc(100vh-64px)]">
         <div className="w-16 h-16 border-t-4 border-primary-500 border-solid rounded-full animate-spin"></div>
@@ -90,9 +101,15 @@ const EntitiesPage = () => {
         </button>
       </div>
 
-      {error && (
+      {errorEntities  && (
         <div className="bg-error/10 border-l-4 border-error text-error p-4 mb-6">
-          {error}
+          {errorEntities }
+        </div>
+      )}
+
+      {errorTags  && (
+        <div className="bg-error/10 border-l-4 border-error text-error p-4 mb-6">
+          {errorTags}
         </div>
       )}
 
@@ -131,7 +148,6 @@ const EntitiesPage = () => {
           </thead>
           <tbody>
             {sortedEntities.map((entity) => {
-              console.log(entity);
             return(
               <tr key={entity.id} className="border-b border-neutral-200 hover:bg-neutral-50">
                 <td className="px-6 py-4">{entity.globalTitle}</td>
@@ -140,12 +156,12 @@ const EntitiesPage = () => {
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex flex-wrap gap-2">
-                    {entity.tagIds?.map((tagId) => (
+                    {entity.tags?.map((tag) => (
                       <span
-                        key={tagId}
+                        key={tag.id}
                         className="bg-primary-100 text-primary-700 text-xs px-2 py-1 rounded"
                       >
-                        {tags.find(t => t.id === tagId)?.translations.find(t => t.lang === 'fr')?.title || 'Inconnu'}
+                        {tags.find(t => t.id == tag.id)?.translations.find(tr => tr.language == 'fr')?.title || 'Inconnu'}
                       </span>
                     ))}
                   </div>
@@ -199,10 +215,23 @@ const EntitiesPage = () => {
               onSubmit={async (entity) => {
                 setSubmitting(true);
                 try {
+                  // Nettoyage des sous-objets pour enlever les id
+                  const cleanMeta = (meta: any) => {
+                    if (!meta) return undefined;
+                    const { id, ...rest } = meta;
+                    return rest;
+                  };
+                  const { id, bookMeta, sermonMeta, eventMeta, ...editEntity } = entity;
+                  const payload = {
+                    ...editEntity,
+                    bookMeta: cleanMeta(bookMeta),
+                    sermonMeta: cleanMeta(sermonMeta),
+                    eventMeta: cleanMeta(eventMeta),
+                  };
                   if (editingEntity) {
-                    await updateEntity(entity.id, entity);
+                    await updateEntity(id, payload);
                   } else {
-                    await addEntity(entity);
+                    await addEntity(payload as CreateDocumentDto);
                   }
                   setShowForm(false);
                   setEditingEntity(null);
